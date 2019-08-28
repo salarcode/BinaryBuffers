@@ -23,11 +23,11 @@ An implementation of BinaryReader adn BinaryWriter which works on binary arrays 
 
 |                Method |      Mean |     Error |     StdDev |    Median | Ratio | RatioSD |
 |---------------------- |----------:|----------:|-----------:|----------:|------:|--------:|
-| BinaryReader_WriteInt | 183.71 ms | 0.8579 ms |  0.8025 ms | 183.66 ms |  1.00 |    0.00 |
-| BufferReader_WriteInt |  76.77 ms | 4.5940 ms | 13.4735 ms |  71.75 ms |  0.43 |    0.08 |
+| BinaryWriter_WriteInt | 183.71 ms | 0.8579 ms |  0.8025 ms | 183.66 ms |  1.00 |    0.00 |
+| BufferWriter_WriteInt |  76.77 ms | 4.5940 ms | 13.4735 ms |  71.75 ms |  0.43 |    0.08 |
 
 
 |                    Method |     Mean |    Error |   StdDev | Ratio |
 |-------------------------- |---------:|---------:|---------:|------:|
-| BinaryReader_WriteDecimal | 226.3 ms | 1.345 ms | 1.258 ms |  1.00 |
-| BufferReader_WriteDecimal | 221.5 ms | 2.754 ms | 2.576 ms |  0.98 |
+| BinaryWriter_WriteDecimal | 226.3 ms | 1.345 ms | 1.258 ms |  1.00 |
+| BufferWriter_WriteDecimal | 221.5 ms | 2.754 ms | 2.576 ms |  0.98 |

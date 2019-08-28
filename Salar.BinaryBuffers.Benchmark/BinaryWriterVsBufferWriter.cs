@@ -25,7 +25,7 @@ namespace Salar.BinaryBuffers.Benchmark
 	public class BinaryWriterVsBufferWriter_Int : BinaryWriterVsBufferWriterBase
 	{
 		[Benchmark(Baseline = true)]
-		public void BinaryReader_WriteInt()
+		public void BinaryWriter_WriteInt()
 		{
 			for (int i = 0; i < Loops; i++)
 			{
@@ -37,7 +37,7 @@ namespace Salar.BinaryBuffers.Benchmark
 		}
 
 		[Benchmark()]
-		public void BufferReader_WriteInt()
+		public void BufferWriter_WriteInt()
 		{
 			for (int i = 0; i < Loops; i++)
 			{
@@ -52,7 +52,7 @@ namespace Salar.BinaryBuffers.Benchmark
 	public class BinaryWriterVsBufferWriter_Decimal : BinaryWriterVsBufferWriterBase
 	{
 		[Benchmark(Baseline = true)]
-		public void BinaryReader_WriteDecimal()
+		public void BinaryWriter_WriteDecimal()
 		{
 			for (int i = 0; i < Loops; i++)
 			{
@@ -64,7 +64,7 @@ namespace Salar.BinaryBuffers.Benchmark
 		}
 
 		[Benchmark()]
-		public void BufferReader_WriteDecimal()
+		public void BufferWriter_WriteDecimal()
 		{
 			for (int i = 0; i < Loops; i++)
 			{
