@@ -60,10 +60,10 @@ namespace Salar.BinaryBuffers
 				return new decimal(
 					new[]
 					{
-						(int) buffer[0] | (int) buffer[1] << 8 | (int) buffer[2] << 16 | (int) buffer[3] << 24,
-						(int) buffer[4] | (int) buffer[5] << 8 | (int) buffer[6] << 16 | (int) buffer[7] << 24,
-						(int) buffer[8] | (int) buffer[9] << 8 | (int) buffer[10] << 16 | (int) buffer[11] << 24,
-						(int) buffer[12] | (int) buffer[13] << 8 | (int) buffer[14] << 16 | (int) buffer[15] << 24
+						BinaryPrimitives.ReadInt32LittleEndian(buffer), // lo
+						BinaryPrimitives.ReadInt32LittleEndian(buffer.Slice(4)), // mid
+						BinaryPrimitives.ReadInt32LittleEndian(buffer.Slice(8)), // hi
+						BinaryPrimitives.ReadInt32LittleEndian(buffer.Slice(12)) // flags
 					});
 			}
 			catch (ArgumentException e)
