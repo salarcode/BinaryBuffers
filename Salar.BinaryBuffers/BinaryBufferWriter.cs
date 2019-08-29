@@ -44,21 +44,23 @@ namespace Salar.BinaryBuffers
 			}
 		}
 
+		public int Length => _position - _originPosition;
+
 		public virtual unsafe void Write(double value)
 		{
 			var pos = _position;
 			var buff = _buffer;
 			Advance(8);
 
-			ulong tmpValue = *(ulong*) &value;
-			buff[pos + 0] = (byte) tmpValue;
-			buff[pos + 1] = (byte) (tmpValue >> 8);
-			buff[pos + 2] = (byte) (tmpValue >> 16);
-			buff[pos + 3] = (byte) (tmpValue >> 24);
-			buff[pos + 4] = (byte) (tmpValue >> 32);
-			buff[pos + 5] = (byte) (tmpValue >> 40);
-			buff[pos + 6] = (byte) (tmpValue >> 48);
-			buff[pos + 7] = (byte) (tmpValue >> 56);
+			ulong tmpValue = *(ulong*)&value;
+			buff[pos + 0] = (byte)tmpValue;
+			buff[pos + 1] = (byte)(tmpValue >> 8);
+			buff[pos + 2] = (byte)(tmpValue >> 16);
+			buff[pos + 3] = (byte)(tmpValue >> 24);
+			buff[pos + 4] = (byte)(tmpValue >> 32);
+			buff[pos + 5] = (byte)(tmpValue >> 40);
+			buff[pos + 6] = (byte)(tmpValue >> 48);
+			buff[pos + 7] = (byte)(tmpValue >> 56);
 		}
 
 		public virtual void Write(decimal value)
@@ -78,8 +80,8 @@ namespace Salar.BinaryBuffers
 			var pos = _position;
 			Advance(2);
 
-			_buffer[pos + 0] = (byte) value;
-			_buffer[pos + 1] = (byte) (value >> 8);
+			_buffer[pos + 0] = (byte)value;
+			_buffer[pos + 1] = (byte)(value >> 8);
 		}
 
 		public virtual void Write(ushort value)
@@ -87,8 +89,8 @@ namespace Salar.BinaryBuffers
 			var pos = _position;
 			Advance(2);
 
-			_buffer[pos + 0] = (byte) value;
-			_buffer[pos + 1] = (byte) (value >> 8);
+			_buffer[pos + 0] = (byte)value;
+			_buffer[pos + 1] = (byte)(value >> 8);
 		}
 
 		public virtual void Write(int value)
@@ -96,19 +98,19 @@ namespace Salar.BinaryBuffers
 			var pos = _position;
 			Advance(4);
 
-			_buffer[pos + 0] = (byte) value;
-			_buffer[pos + 1] = (byte) (value >> 8);
-			_buffer[pos + 2] = (byte) (value >> 16);
-			_buffer[pos + 3] = (byte) (value >> 24);
+			_buffer[pos + 0] = (byte)value;
+			_buffer[pos + 1] = (byte)(value >> 8);
+			_buffer[pos + 2] = (byte)(value >> 16);
+			_buffer[pos + 3] = (byte)(value >> 24);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private void Write(int value, int pos)
 		{
-			_buffer[pos + 0] = (byte) value;
-			_buffer[pos + 1] = (byte) (value >> 8);
-			_buffer[pos + 2] = (byte) (value >> 16);
-			_buffer[pos + 3] = (byte) (value >> 24);
+			_buffer[pos + 0] = (byte)value;
+			_buffer[pos + 1] = (byte)(value >> 8);
+			_buffer[pos + 2] = (byte)(value >> 16);
+			_buffer[pos + 3] = (byte)(value >> 24);
 		}
 
 		public virtual void Write(uint value)
@@ -116,10 +118,10 @@ namespace Salar.BinaryBuffers
 			var pos = _position;
 			Advance(4);
 
-			_buffer[pos + 0] = (byte) value;
-			_buffer[pos + 1] = (byte) (value >> 8);
-			_buffer[pos + 2] = (byte) (value >> 16);
-			_buffer[pos + 3] = (byte) (value >> 24);
+			_buffer[pos + 0] = (byte)value;
+			_buffer[pos + 1] = (byte)(value >> 8);
+			_buffer[pos + 2] = (byte)(value >> 16);
+			_buffer[pos + 3] = (byte)(value >> 24);
 		}
 
 		public virtual void Write(long value)
@@ -128,14 +130,14 @@ namespace Salar.BinaryBuffers
 			var buff = _buffer;
 			Advance(8);
 
-			buff[pos + 0] = (byte) value;
-			buff[pos + 1] = (byte) (value >> 8);
-			buff[pos + 2] = (byte) (value >> 16);
-			buff[pos + 3] = (byte) (value >> 24);
-			buff[pos + 4] = (byte) (value >> 32);
-			buff[pos + 5] = (byte) (value >> 40);
-			buff[pos + 6] = (byte) (value >> 48);
-			buff[pos + 7] = (byte) (value >> 56);
+			buff[pos + 0] = (byte)value;
+			buff[pos + 1] = (byte)(value >> 8);
+			buff[pos + 2] = (byte)(value >> 16);
+			buff[pos + 3] = (byte)(value >> 24);
+			buff[pos + 4] = (byte)(value >> 32);
+			buff[pos + 5] = (byte)(value >> 40);
+			buff[pos + 6] = (byte)(value >> 48);
+			buff[pos + 7] = (byte)(value >> 56);
 		}
 
 		public virtual void Write(ulong value)
@@ -144,14 +146,14 @@ namespace Salar.BinaryBuffers
 			var buff = _buffer;
 			Advance(8);
 
-			buff[pos + 0] = (byte) value;
-			buff[pos + 1] = (byte) (value >> 8);
-			buff[pos + 2] = (byte) (value >> 16);
-			buff[pos + 3] = (byte) (value >> 24);
-			buff[pos + 4] = (byte) (value >> 32);
-			buff[pos + 5] = (byte) (value >> 40);
-			buff[pos + 6] = (byte) (value >> 48);
-			buff[pos + 7] = (byte) (value >> 56);
+			buff[pos + 0] = (byte)value;
+			buff[pos + 1] = (byte)(value >> 8);
+			buff[pos + 2] = (byte)(value >> 16);
+			buff[pos + 3] = (byte)(value >> 24);
+			buff[pos + 4] = (byte)(value >> 32);
+			buff[pos + 5] = (byte)(value >> 40);
+			buff[pos + 6] = (byte)(value >> 48);
+			buff[pos + 7] = (byte)(value >> 56);
 		}
 
 		public virtual unsafe void Write(float value)
@@ -159,11 +161,11 @@ namespace Salar.BinaryBuffers
 			var pos = _position;
 			Advance(4);
 
-			uint tmpValue = *(uint*) &value;
-			_buffer[pos + 0] = (byte) tmpValue;
-			_buffer[pos + 1] = (byte) (tmpValue >> 8);
-			_buffer[pos + 2] = (byte) (tmpValue >> 16);
-			_buffer[pos + 3] = (byte) (tmpValue >> 24);
+			uint tmpValue = *(uint*)&value;
+			_buffer[pos + 0] = (byte)tmpValue;
+			_buffer[pos + 1] = (byte)(tmpValue >> 8);
+			_buffer[pos + 2] = (byte)(tmpValue >> 16);
+			_buffer[pos + 3] = (byte)(tmpValue >> 24);
 		}
 
 		public virtual void Write(bool value)
@@ -171,7 +173,7 @@ namespace Salar.BinaryBuffers
 			var pos = _position;
 			Advance(1);
 
-			_buffer[pos + 0] = (byte) (value ? 1 : 0);
+			_buffer[pos + 0] = (byte)(value ? 1 : 0);
 		}
 
 		public virtual void Write(byte value)
@@ -187,7 +189,7 @@ namespace Salar.BinaryBuffers
 			var pos = _position;
 			Advance(1);
 
-			_buffer[pos + 0] = (byte) value;
+			_buffer[pos + 0] = (byte)value;
 		}
 
 		public virtual void Write(byte[] buffer)
@@ -228,12 +230,16 @@ namespace Salar.BinaryBuffers
 				buffer.CopyTo(new Span<byte>(_buffer, pos, length));
 		}
 
+		public ReadOnlySpan<byte> ToReadOnlySpan() => new ReadOnlySpan<byte>(_buffer, _originPosition, Length);
+
+		public byte[] ToArray() => ToReadOnlySpan().ToArray();
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private void Advance(int count)
 		{
 			var newPos = _position + count;
 
-			if ((uint) newPos > (uint) _length)
+			if ((uint)newPos > (uint)_length)
 			{
 				_position = _length;
 				throw new EndOfStreamException("Reached to end of data");
