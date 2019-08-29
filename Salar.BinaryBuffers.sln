@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Salar.BinaryBuffers", "Sala
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Salar.BinaryBuffers.Benchmark", "Salar.BinaryBuffers.Benchmark\Salar.BinaryBuffers.Benchmark.csproj", "{D98CCFA2-C4E4-405C-8192-F8A6C7AF08EF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salar.BinaryBuffers.Tests", "Salar.BinaryBuffers.Tests\Salar.BinaryBuffers.Tests.csproj", "{B81A8ADA-AF4E-4007-9066-DB7DE2496683}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{D98CCFA2-C4E4-405C-8192-F8A6C7AF08EF}.Debug|Any CPU.Build.0 = Release|Any CPU
 		{D98CCFA2-C4E4-405C-8192-F8A6C7AF08EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D98CCFA2-C4E4-405C-8192-F8A6C7AF08EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B81A8ADA-AF4E-4007-9066-DB7DE2496683}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B81A8ADA-AF4E-4007-9066-DB7DE2496683}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B81A8ADA-AF4E-4007-9066-DB7DE2496683}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B81A8ADA-AF4E-4007-9066-DB7DE2496683}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
