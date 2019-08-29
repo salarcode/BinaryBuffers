@@ -24,7 +24,7 @@ namespace Salar.BinaryBuffers.Benchmark
 			_bufferReader = new BinaryBufferReader(_buffer);
 		}
 	}
-	
+
 	public class BinaryReaderVsBufferReader_Int : BinaryReaderVsBufferReaderBase
 	{
 		[Benchmark(Baseline = true)]
@@ -62,7 +62,6 @@ namespace Salar.BinaryBuffers.Benchmark
 				_mem.Position = 0;
 
 				_binaryReader.ReadDecimal();
-				_binaryReader.ReadSingle();
 			}
 		}
 
@@ -75,6 +74,31 @@ namespace Salar.BinaryBuffers.Benchmark
 				_bufferReader.Position = 0;
 
 				_bufferReader.ReadDecimal();
+			}
+		}
+	}
+
+	public class BinaryReaderVsBufferReader_Float : BinaryReaderVsBufferReaderBase
+	{
+		[Benchmark(Baseline = true)]
+		public void BinaryReader_ReadFloat()
+		{
+			for (int i = 0; i < Loops; i++)
+			{
+				_mem.Position = 0;
+
+				_binaryReader.ReadSingle();
+			}
+		}
+
+
+		[Benchmark()]
+		public void BufferReader_ReadFloat()
+		{
+			for (int i = 0; i < Loops; i++)
+			{
+				_bufferReader.Position = 0;
+
 				_bufferReader.ReadSingle();
 			}
 		}
