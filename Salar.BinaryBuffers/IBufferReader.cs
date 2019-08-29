@@ -1,4 +1,6 @@
-﻿namespace Salar.BinaryBuffers
+﻿using System;
+
+namespace Salar.BinaryBuffers
 {
 	public interface IBufferReader
 	{
@@ -10,8 +12,10 @@
 		ulong ReadUInt64();
 		float ReadSingle();
 		double ReadDouble();
-		//decimal ReadDecimal();
+		decimal ReadDecimal();
 		byte ReadByte();
+		byte[] ReadBytes(int count);
+		ReadOnlySpan<byte> ReadSpan(int count);
 		sbyte ReadSByte();
 		bool ReadBoolean();
 	}

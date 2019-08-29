@@ -75,7 +75,10 @@ namespace Salar.BinaryBuffers
 
 		public virtual byte ReadByte() => InternalReadByte();
 
-		// ReSharper disable once UnusedMember.Global
+		public virtual byte[] ReadBytes(int count) => InternalReadSpan(count).ToArray();
+		
+		public virtual ReadOnlySpan<byte> ReadSpan(int count) => InternalReadSpan(count);
+		
 		public virtual sbyte ReadSByte() => (sbyte) InternalReadByte();
 
 		public virtual bool ReadBoolean() => InternalReadByte() != 0;

@@ -49,6 +49,32 @@ namespace Salar.BinaryBuffers.Benchmark
 		}
 	}
 	
+
+	public class BinaryWriterVsBufferWriter_Float : BinaryWriterVsBufferWriterBase
+	{
+		[Benchmark(Baseline = true)]
+		public void BinaryWriter_WriteFloat()
+		{
+			for (int i = 0; i < Loops; i++)
+			{
+				_mem.Position = 0;
+
+				_binaryWriter.Write((float) 1024.1024);
+			}
+		}
+
+		[Benchmark()]
+		public void BufferWriter_WriteFloat()
+		{
+			for (int i = 0; i < Loops; i++)
+			{
+				_bufferWriter.Position = 0;
+
+				_bufferWriter.Write((float) 1024.1024);
+			}
+		}
+	}
+
 	public class BinaryWriterVsBufferWriter_Decimal : BinaryWriterVsBufferWriterBase
 	{
 		[Benchmark(Baseline = true)]
@@ -58,7 +84,6 @@ namespace Salar.BinaryBuffers.Benchmark
 			{
 				_mem.Position = 0;
 
-				_binaryWriter.Write((decimal)1024.1024);
 				_binaryWriter.Write((decimal)1024.1024);
 			}
 		}
@@ -70,7 +95,6 @@ namespace Salar.BinaryBuffers.Benchmark
 			{
 				_bufferWriter.Position = 0;
 
-				_bufferWriter.Write((decimal)1024.1024);
 				_bufferWriter.Write((decimal)1024.1024);
 			}
 		}
