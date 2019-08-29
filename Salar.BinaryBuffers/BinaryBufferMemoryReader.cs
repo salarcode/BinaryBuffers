@@ -83,8 +83,6 @@ namespace Salar.BinaryBuffers
 
 		public virtual bool ReadBoolean() => InternalReadByte() != 0;
 
-		// Inlined to avoid some method call overhead with InternalRead.
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		protected byte InternalReadByte()
 		{
 			int origPos = _position;

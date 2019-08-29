@@ -1,6 +1,31 @@
 # BinaryBuffers
-An implementation of BinaryReader and BinaryWriter which works on binary arrays directly by eliminating the need of a middle man Stream.
+A high performance implementation of BinaryReader and BinaryWriter which works on binary arrays directly by eliminating the need of a middle man Stream.
 
+## [NuGet Package](https://www.nuget.org/packages/Salar.BinaryBuffers)
+```
+PM> Install-Package Salar.BinaryBuffers
+```
+
+# How to Use
+
+BinaryBufferReader and BinaryBufferWriter are available right after you install the packge. Unlike BinaryReader, the BinaryBuffer classes work directly with the buffer array.
+
+```csharp
+// the buffer
+var buffer = new byte[100];
+
+// writing to buffer
+var writer = new BinaryBufferWriter(buffer);
+
+writer.Write(2019);
+writer.Write(8.11);
+
+// reading
+var reader = new BinaryBufferReader(buffer);
+
+var year = reader.ReadInt32();
+var time = reader.ReadDouble();
+```
 
 # Benchmarks
 
