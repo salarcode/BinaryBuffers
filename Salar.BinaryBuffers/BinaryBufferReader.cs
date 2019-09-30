@@ -72,7 +72,7 @@ namespace Salar.BinaryBuffers
 
 		public virtual ulong ReadUInt64() => BinaryPrimitives.ReadUInt64LittleEndian(InternalReadSpan(8));
 
-#if NETFRAMEWORK
+#if NETFRAMEWORK || NETSTANDARD2_0
 		public virtual unsafe float ReadSingle()
 		{
 			var m_buffer = InternalReadSpan(4);
