@@ -6,6 +6,7 @@ namespace Salar.BinaryBuffers.Benchmark
 	public abstract class BinaryWriterVsBufferWriterBase
 	{
 		protected const int Loops = 5_000_000;
+
         protected readonly MemoryStream _memoryStream;
 		protected readonly BinaryWriter _binaryWriter;
 		protected readonly BinaryBufferWriter _bufferWriter;
