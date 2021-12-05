@@ -6,17 +6,16 @@ namespace Salar.BinaryBuffers.Benchmark
 	public abstract class BinaryWriterVsBufferWriterBase
 	{
 		protected const int Loops = 5_000_000;
-		private readonly byte[] _buffer;
-		protected readonly MemoryStream _mem;
+        protected readonly MemoryStream _memoryStream;
 		protected readonly BinaryWriter _binaryWriter;
 		protected readonly BinaryBufferWriter _bufferWriter;
 
 		protected BinaryWriterVsBufferWriterBase()
 		{
-			_buffer = new byte[1024];
-			_mem = new MemoryStream(_buffer);
-			_binaryWriter = new BinaryWriter(_mem);
-			_bufferWriter = new BinaryBufferWriter(_buffer);
+            var buffer = new byte[1024];
+			_memoryStream = new MemoryStream(buffer);
+			_binaryWriter = new BinaryWriter(_memoryStream);
+			_bufferWriter = new BinaryBufferWriter(buffer);
 		}
 		
 		
@@ -29,14 +28,14 @@ namespace Salar.BinaryBuffers.Benchmark
 		{
 			for (int i = 0; i < Loops; i++)
 			{
-				_mem.Position = 0;
+				_memoryStream.Position = 0;
 
 				_binaryWriter.Write(1024);
 				_binaryWriter.Write(1024L);
 			}
 		}
 
-		[Benchmark()]
+		[Benchmark]
 		public void BufferWriter_WriteInt()
 		{
 			for (int i = 0; i < Loops; i++)
@@ -57,20 +56,20 @@ namespace Salar.BinaryBuffers.Benchmark
 		{
 			for (int i = 0; i < Loops; i++)
 			{
-				_mem.Position = 0;
+				_memoryStream.Position = 0;
 
-				_binaryWriter.Write((float) 1024.1024);
+				_binaryWriter.Write(1024.1024F);
 			}
 		}
 
-		[Benchmark()]
+		[Benchmark]
 		public void BufferWriter_WriteFloat()
 		{
 			for (int i = 0; i < Loops; i++)
 			{
 				_bufferWriter.Position = 0;
 
-				_bufferWriter.Write((float) 1024.1024);
+				_bufferWriter.Write(1024.1024F);
 			}
 		}
 	}
@@ -82,20 +81,20 @@ namespace Salar.BinaryBuffers.Benchmark
 		{
 			for (int i = 0; i < Loops; i++)
 			{
-				_mem.Position = 0;
+				_memoryStream.Position = 0;
 
-				_binaryWriter.Write((decimal)1024.1024);
+				_binaryWriter.Write(1024.1024M);
 			}
 		}
 
-		[Benchmark()]
+		[Benchmark]
 		public void BufferWriter_WriteDecimal()
 		{
 			for (int i = 0; i < Loops; i++)
 			{
 				_bufferWriter.Position = 0;
 
-				_bufferWriter.Write((decimal)1024.1024);
+				_bufferWriter.Write(1024.1024M);
 			}
 		}
 	}

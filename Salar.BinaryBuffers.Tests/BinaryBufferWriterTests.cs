@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Text;
 using Xunit;
@@ -8,22 +7,21 @@ namespace Salar.BinaryBuffers.Tests
 {
 	public class BinaryBufferWriterTests : IDisposable
 	{
-		private byte[] _data;
-		private MemoryStream _mem;
-		private BinaryReader _reader;
-		private BinaryBufferWriter _bufferWriter;
+        private readonly MemoryStream _memoryStream;
+		private readonly BinaryReader _reader;
+		private readonly BinaryBufferWriter _bufferWriter;
 
 		public BinaryBufferWriterTests()
 		{
-			_data = new byte[1024];
-			_mem = new MemoryStream(_data);
-			_reader = new BinaryReader(_mem, Encoding.UTF8, true);
-			_bufferWriter = new BinaryBufferWriter(_data);
+            var data = new byte[1024];
+			_memoryStream = new MemoryStream(data);
+			_reader = new BinaryReader(_memoryStream, Encoding.UTF8, true);
+			_bufferWriter = new BinaryBufferWriter(data);
 		}
 
 		private void Reset()
 		{
-			_mem.Position = 0;
+			_memoryStream.Position = 0;
 			_bufferWriter.Position = 0;
 		}
 
@@ -281,7 +279,7 @@ namespace Salar.BinaryBuffers.Tests
 
 		public void Dispose()
 		{
-			_mem?.Dispose();
+			_memoryStream?.Dispose();
 		}
 	}
 }

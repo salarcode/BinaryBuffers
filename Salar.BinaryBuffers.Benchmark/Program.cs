@@ -1,12 +1,10 @@
-﻿using System;
-using System.Reflection;
-using BenchmarkDotNet.Running;
+﻿using BenchmarkDotNet.Running;
 
 namespace Salar.BinaryBuffers.Benchmark
 {
-	class Program
+	public class Program
 	{
-		static void Main(string[] args)
+		public static void Main(string[] args)
 		{
 			BenchmarkRunner.Run(typeof(Program).Assembly);
 		}

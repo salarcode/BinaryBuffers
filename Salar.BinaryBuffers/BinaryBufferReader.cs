@@ -1,48 +1,37 @@
 ﻿using System;
 using System.Buffers.Binary;
 using System.IO;
-using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace Salar.BinaryBuffers
 {
 	public class BinaryBufferReader : IBufferReader
 	{
 		private readonly byte[] _data;
-		private int _originPosition;
 		private int _position;
-		private int _length;
+		private readonly int _originalPosition;
+		private readonly int _length;
 
 		public BinaryBufferReader(byte[] data)
 		{
-			if (data == null)
-				throw new ArgumentNullException(nameof(data));
-
-			_data = data;
+            _data = data ?? throw new ArgumentNullException(nameof(data));
 			_position = 0;
-			_originPosition = 0;
+			_originalPosition = 0;
 			_length = data.Length;
 		}
 
 		public BinaryBufferReader(byte[] data, int position, int length)
 		{
-			if (data == null)
-				throw new ArgumentNullException(nameof(data));
-
-			_data = data;
+            _data = data ?? throw new ArgumentNullException(nameof(data));
 			_position = position;
-			_originPosition = position;
+			_originalPosition = position;
 			_length = length;
 		}
 
 		public BinaryBufferReader(in ArraySegment<byte> data)
 		{
-			if (data.Array == null)
-				throw new ArgumentNullException(nameof(data));
-
-			_data = data.Array;
+            _data = data.Array ?? throw new ArgumentNullException(nameof(data));
 			_position = data.Offset;
-			_originPosition = _position;
+			_originalPosition = _position;
 			_length = data.Count;
 		}
 
@@ -51,11 +40,11 @@ namespace Salar.BinaryBuffers
 			get => _position;
 			set
 			{
-				var newPos = _originPosition + value;
+				var newPos = _originalPosition + value;
 				if (newPos > _length)
-					throw new ArgumentOutOfRangeException("value", "The new position cannot be larger than the length");
+					throw new ArgumentOutOfRangeException(nameof(value), "The new position cannot be larger than the length");
 				if (newPos < 0)
-					throw new ArgumentOutOfRangeException("value", "The new position is invalid");
+					throw new ArgumentOutOfRangeException(nameof(value), "The new position is invalid");
 				_position = newPos;
 			}
 		}

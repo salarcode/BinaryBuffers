@@ -1,23 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace Salar.BinaryBuffers
 {
 	public class BinaryBufferWriter
 	{
 		private readonly byte[] _buffer;
-		private readonly int _length;
-		private readonly int _originPosition;
 		private int _position;
+		private readonly int _originalPosition;
+		private readonly int _length;
 
 		public BinaryBufferWriter(byte[] buffer)
 		{
 			_buffer = buffer;
 			_position = 0;
-			_originPosition = 0;
+			_originalPosition = 0;
 			_length = buffer.Length;
 		}
 
@@ -25,7 +23,7 @@ namespace Salar.BinaryBuffers
 		{
 			_buffer = buffer;
 			_position = position;
-			_originPosition = position;
+			_originalPosition = position;
 			_length = length;
 		}
 
@@ -35,16 +33,16 @@ namespace Salar.BinaryBuffers
 			get => _position;
 			set
 			{
-				var newPos = _originPosition + value;
+				var newPos = _originalPosition + value;
 				if (newPos > _length)
-					throw new ArgumentOutOfRangeException("value", "The new position cannot be larger than the length");
+					throw new ArgumentOutOfRangeException(nameof(value), "The new position cannot be larger than the length");
 				if (newPos < 0)
-					throw new ArgumentOutOfRangeException("value", "The new position is invalid");
+					throw new ArgumentOutOfRangeException(nameof(value), "The new position is invalid");
 				_position = newPos;
 			}
 		}
 
-		public int Length => _position - _originPosition;
+		public int Length => _position - _originalPosition;
 
 		public virtual unsafe void Write(double value)
 		{
@@ -230,7 +228,7 @@ namespace Salar.BinaryBuffers
 				buffer.CopyTo(new Span<byte>(_buffer, pos, length));
 		}
 
-		public ReadOnlySpan<byte> ToReadOnlySpan() => new ReadOnlySpan<byte>(_buffer, _originPosition, Length);
+		public ReadOnlySpan<byte> ToReadOnlySpan() => new ReadOnlySpan<byte>(_buffer, _originalPosition, Length);
 
 		public byte[] ToArray() => ToReadOnlySpan().ToArray();
 
