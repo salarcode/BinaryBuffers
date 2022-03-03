@@ -3,33 +3,33 @@
     using System;
 
     public interface IBufferReader
-	{
-		short ReadInt16();
+    {
+        short ReadInt16();
 
-		ushort ReadUInt16();
+        ushort ReadUInt16();
 
-		int ReadInt32();
+        int ReadInt32();
 
-		uint ReadUInt32();
+        uint ReadUInt32();
 
-		long ReadInt64();
+        long ReadInt64();
 
-		ulong ReadUInt64();
+        ulong ReadUInt64();
 
-		float ReadSingle();
+        float ReadSingle();
 
-		double ReadDouble();
+        double ReadDouble();
 
-		decimal ReadDecimal();
+        decimal ReadDecimal();
 
-		byte ReadByte();
+        byte ReadByte();
 
-		byte[] ReadBytes(int count);
+        byte[] ReadBytes(int count);
 
-		ReadOnlySpan<byte> ReadSpan(int count);
+        ReadOnlySpan<byte> ReadSpan(int count);
 
-		sbyte ReadSByte();
+        sbyte ReadSByte();
 
-		bool ReadBoolean();
-	}
+        bool ReadBoolean();
+    }
 }
