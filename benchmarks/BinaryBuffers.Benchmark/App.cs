@@ -1,12 +1,14 @@
-﻿using BenchmarkDotNet.Running;
-
-namespace Salar.BinaryBuffers.Benchmark
+﻿namespace BinaryBuffers.Benchmark
 {
-	public class Program
-	{
-		public static void Main(string[] args)
-		{
-			BenchmarkRunner.Run(typeof(Program).Assembly);
-		}
-	}
+    using Configurations;
+
+    using BenchmarkDotNet.Running;
+
+    public static class App
+    {
+        public static void Main()
+        {
+            BenchmarkRunner.Run(typeof(App).Assembly, new PerformanceConfig());
+        }
+    }
 }
