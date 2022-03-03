@@ -1,10 +1,10 @@
-﻿using System;
-using System.IO;
-using System.Runtime.CompilerServices;
-
-namespace Salar.BinaryBuffers
+﻿namespace BinaryBuffers
 {
-	public class BinaryBufferWriter
+    using System;
+    using System.IO;
+    using System.Runtime.CompilerServices;
+
+    public class BinaryBufferWriter
 	{
 		private readonly byte[] _buffer;
 		private int _position;
@@ -34,10 +34,10 @@ namespace Salar.BinaryBuffers
 			set
 			{
 				var newPos = _originalPosition + value;
-				if (newPos > _length)
-					throw new ArgumentOutOfRangeException(nameof(value), "The new position cannot be larger than the length");
-				if (newPos < 0)
-					throw new ArgumentOutOfRangeException(nameof(value), "The new position is invalid");
+
+				if (newPos > _length) throw new ArgumentOutOfRangeException(nameof(value), "The new position cannot be larger than the length");
+				if (newPos < 0) throw new ArgumentOutOfRangeException(nameof(value), "The new position is invalid");
+
 				_position = newPos;
 			}
 		}
@@ -215,18 +215,14 @@ namespace Salar.BinaryBuffers
 
 		public virtual void Write(in ReadOnlySpan<byte> buffer)
 		{
-			if (buffer == null)
-				throw new ArgumentNullException(nameof(buffer));
+			if (buffer == null) throw new ArgumentNullException(nameof(buffer));
 
 			var pos = _position;
 			var length = buffer.Length;
 			Advance(length);
 
-			if (pos == 0)
-				buffer.CopyTo(_buffer);
-			else
-				buffer.CopyTo(new Span<byte>(_buffer, pos, length));
-		}
+            buffer.CopyTo(pos == 0 ? _buffer : new Span<byte>(_buffer, pos, length));
+        }
 
 		public ReadOnlySpan<byte> ToReadOnlySpan() => new ReadOnlySpan<byte>(_buffer, _originalPosition, Length);
 

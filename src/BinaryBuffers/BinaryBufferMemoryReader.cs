@@ -1,21 +1,17 @@
-﻿using System;
-using System.Buffers.Binary;
-using System.IO;
-
-namespace Salar.BinaryBuffers
+﻿namespace BinaryBuffers
 {
-	public class BinaryBufferMemoryReader : IBufferReader
-	{
-		private int _position;
-		private int _length;
+    using System;
+    using System.Buffers.Binary;
+    using System.IO;
 
-		private ReadOnlyMemory<byte> _data;
+    public class BinaryBufferMemoryReader : IBufferReader
+	{
+		private readonly ReadOnlyMemory<byte> _data;
+		private int _position;
+		private readonly int _length;
 
 		public BinaryBufferMemoryReader(in ReadOnlyMemory<byte> data)
 		{
-			if (data.ToArray() == null)
-				throw new ArgumentNullException(nameof(data));
-
 			_data = data;
 			_position = 0;
 			_length = data.Length;
@@ -34,7 +30,7 @@ namespace Salar.BinaryBuffers
 
 		public virtual ulong ReadUInt64() => BinaryPrimitives.ReadUInt64LittleEndian(InternalReadSpan(8));
 
-#if NETFRAMEWORK || NETSTANDARD2_0
+#if NETSTANDARD2_0
 
 		public virtual unsafe float ReadSingle()
 		{
@@ -43,12 +39,10 @@ namespace Salar.BinaryBuffers
 			return *((float*)&tmpBuffer);
 		}
 #else
-		public virtual float ReadSingle() =>
-			BitConverter.Int32BitsToSingle(BinaryPrimitives.ReadInt32LittleEndian(InternalReadSpan(4)));
+		public virtual float ReadSingle() => BitConverter.Int32BitsToSingle(BinaryPrimitives.ReadInt32LittleEndian(InternalReadSpan(4)));
 #endif
 
-		public virtual double ReadDouble() =>
-			BitConverter.Int64BitsToDouble(BinaryPrimitives.ReadInt64LittleEndian(InternalReadSpan(8)));
+		public virtual double ReadDouble() => BitConverter.Int64BitsToDouble(BinaryPrimitives.ReadInt64LittleEndian(InternalReadSpan(8)));
 
 		public virtual decimal ReadDecimal()
 		{

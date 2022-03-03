@@ -1,10 +1,10 @@
-﻿using System;
-using System.Buffers.Binary;
-using System.IO;
-
-namespace Salar.BinaryBuffers
+﻿namespace BinaryBuffers
 {
-	public class BinaryBufferReader : IBufferReader
+    using System;
+    using System.Buffers.Binary;
+    using System.IO;
+
+    public class BinaryBufferReader : IBufferReader
 	{
 		private readonly byte[] _data;
 		private int _position;
@@ -41,10 +41,9 @@ namespace Salar.BinaryBuffers
 			set
 			{
 				var newPos = _originalPosition + value;
-				if (newPos > _length)
-					throw new ArgumentOutOfRangeException(nameof(value), "The new position cannot be larger than the length");
-				if (newPos < 0)
-					throw new ArgumentOutOfRangeException(nameof(value), "The new position is invalid");
+				if (newPos > _length) throw new ArgumentOutOfRangeException(nameof(value), "The new position cannot be larger than the length");
+				if (newPos < 0) throw new ArgumentOutOfRangeException(nameof(value), "The new position is invalid");
+
 				_position = newPos;
 			}
 		}
@@ -61,34 +60,32 @@ namespace Salar.BinaryBuffers
 
 		public virtual ulong ReadUInt64() => BinaryPrimitives.ReadUInt64LittleEndian(InternalReadSpan(8));
 
-#if NETFRAMEWORK || NETSTANDARD2_0
+#if NETSTANDARD2_0
 		public virtual unsafe float ReadSingle()
 		{
 			var m_buffer = InternalReadSpan(4);
 			uint tmpBuffer = (uint)(m_buffer[0] | m_buffer[1] << 8 | m_buffer[2] << 16 | m_buffer[3] << 24);
+
 			return *((float*)&tmpBuffer);
 		}
 #else
-		public virtual float ReadSingle() =>
-			BitConverter.Int32BitsToSingle(BinaryPrimitives.ReadInt32LittleEndian(InternalReadSpan(4)));
+		public virtual float ReadSingle() => BitConverter.Int32BitsToSingle(BinaryPrimitives.ReadInt32LittleEndian(InternalReadSpan(4)));
 #endif
 
-		public virtual double ReadDouble() =>
-			BitConverter.Int64BitsToDouble(BinaryPrimitives.ReadInt64LittleEndian(InternalReadSpan(8)));
+		public virtual double ReadDouble() => BitConverter.Int64BitsToDouble(BinaryPrimitives.ReadInt64LittleEndian(InternalReadSpan(8)));
 
 		public virtual decimal ReadDecimal()
 		{
 			var buffer = InternalReadSpan(16);
 			try
 			{
-				return new decimal(
-					new[]
-					{
-						BinaryPrimitives.ReadInt32LittleEndian(buffer), // lo
-						BinaryPrimitives.ReadInt32LittleEndian(buffer.Slice(4)), // mid
-						BinaryPrimitives.ReadInt32LittleEndian(buffer.Slice(8)), // hi
-						BinaryPrimitives.ReadInt32LittleEndian(buffer.Slice(12)) // flags
-					});
+				return new decimal(new[]
+				{
+					BinaryPrimitives.ReadInt32LittleEndian(buffer), // lo
+					BinaryPrimitives.ReadInt32LittleEndian(buffer.Slice(4)), // mid
+					BinaryPrimitives.ReadInt32LittleEndian(buffer.Slice(8)), // hi
+					BinaryPrimitives.ReadInt32LittleEndian(buffer.Slice(12)) // flags
+				});
 			}
 			catch (ArgumentException e)
 			{
@@ -103,7 +100,7 @@ namespace Salar.BinaryBuffers
 		
 		public virtual ReadOnlySpan<byte> ReadSpan(int count) => InternalReadSpan(count);
 		
-		public virtual sbyte ReadSByte() => (sbyte) InternalReadByte();
+		public virtual sbyte ReadSByte() => (sbyte)InternalReadByte();
 
 		public virtual bool ReadBoolean() => InternalReadByte() != 0;
 
@@ -120,6 +117,7 @@ namespace Salar.BinaryBuffers
 
 			var b = _data[origPos];
 			_position = newPos;
+
 			return b;
 		}
 
@@ -136,6 +134,7 @@ namespace Salar.BinaryBuffers
 
 			var span = new ReadOnlySpan<byte>(_data, origPos, count);
 			_position = newPos;
+
 			return span;
 		}
 	}

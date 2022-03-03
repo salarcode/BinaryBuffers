@@ -1,44 +1,46 @@
-﻿using System;
-using System.IO;
-using System.Text;
-using Xunit;
-
-namespace Salar.BinaryBuffers.Tests
+﻿namespace BinaryBuffers.Tests
 {
-	public class BinaryBufferWriterTests : IDisposable
+    using Xunit;
+
+    using System;
+    using System.IO;
+    using System.Text;
+
+    public class BinaryBufferReaderTests : IDisposable
 	{
         private readonly MemoryStream _memoryStream;
-		private readonly BinaryReader _reader;
-		private readonly BinaryBufferWriter _bufferWriter;
+		private readonly BinaryWriter _writer;
+		private readonly BinaryBufferReader _bufferReader;
 
-		public BinaryBufferWriterTests()
+		public BinaryBufferReaderTests()
 		{
             var data = new byte[1024];
 			_memoryStream = new MemoryStream(data);
-			_reader = new BinaryReader(_memoryStream, Encoding.UTF8, true);
-			_bufferWriter = new BinaryBufferWriter(data);
+			_writer = new BinaryWriter(_memoryStream, Encoding.UTF8, true);
+			_bufferReader = new BinaryBufferReader(data);
 		}
 
 		private void Reset()
 		{
 			_memoryStream.Position = 0;
-			_bufferWriter.Position = 0;
+			_memoryStream.SetLength(0);
+			_bufferReader.Position = 0;
 		}
 
 		[Theory]
 		[InlineData(0)]
 		[InlineData(-1)]
 		[InlineData(byte.MaxValue)]
-		[InlineData(Int16.MinValue)]
-		[InlineData(Int16.MinValue / 2)]
-		[InlineData(Int16.MaxValue)]
-		[InlineData(Int16.MaxValue / 2)]
-		public void ReadInt16(Int16 input)
+		[InlineData(short.MinValue)]
+		[InlineData(short.MinValue / 2)]
+		[InlineData(short.MaxValue)]
+		[InlineData(short.MaxValue / 2)]
+		public void ReadInt16(short input)
 		{
 			Reset();
-			_bufferWriter.Write(input);
+			_writer.Write(input);
 
-			var val = _reader.ReadInt16();
+			var val = _bufferReader.ReadInt16();
 
 			Assert.Equal(input, val);
 		}
@@ -46,14 +48,14 @@ namespace Salar.BinaryBuffers.Tests
 		[Theory]
 		[InlineData(0)]
 		[InlineData(byte.MaxValue)]
-		[InlineData(UInt16.MaxValue)]
-		[InlineData(UInt16.MaxValue / 2)]
-		public void ReadUInt16(UInt16 input)
+		[InlineData(ushort.MaxValue)]
+		[InlineData(ushort.MaxValue / 2)]
+		public void ReadUInt16(ushort input)
 		{
 			Reset();
-			_bufferWriter.Write(input);
+			_writer.Write(input);
 
-			var val = _reader.ReadUInt16();
+			var val = _bufferReader.ReadUInt16();
 
 			Assert.Equal(input, val);
 		}
@@ -71,9 +73,9 @@ namespace Salar.BinaryBuffers.Tests
 		public void ReadInt32(int input)
 		{
 			Reset();
-			_bufferWriter.Write(input);
+			_writer.Write(input);
 
-			var val = _reader.ReadInt32();
+			var val = _bufferReader.ReadInt32();
 
 			Assert.Equal(input, val);
 		}
@@ -87,9 +89,9 @@ namespace Salar.BinaryBuffers.Tests
 		public void ReadUInt32(uint input)
 		{
 			Reset();
-			_bufferWriter.Write(input);
+			_writer.Write(input);
 
-			var val = _reader.ReadUInt32();
+			var val = _bufferReader.ReadUInt32();
 
 			Assert.Equal(input, val);
 		}
@@ -111,9 +113,9 @@ namespace Salar.BinaryBuffers.Tests
 		public void ReadInt64(long input)
 		{
 			Reset();
-			_bufferWriter.Write(input);
+			_writer.Write(input);
 
-			var val = _reader.ReadInt64();
+			var val = _bufferReader.ReadInt64();
 
 			Assert.Equal(input, val);
 		}
@@ -129,9 +131,9 @@ namespace Salar.BinaryBuffers.Tests
 		public void ReadUInt64(ulong input)
 		{
 			Reset();
-			_bufferWriter.Write(input);
+			_writer.Write(input);
 
-			var val = _reader.ReadUInt64();
+			var val = _bufferReader.ReadUInt64();
 
 			Assert.Equal(input, val);
 		}
@@ -155,9 +157,9 @@ namespace Salar.BinaryBuffers.Tests
 		public void ReadSingle(float input)
 		{
 			Reset();
-			_bufferWriter.Write(input);
+			_writer.Write(input);
 
-			var val = _reader.ReadSingle();
+			var val = _bufferReader.ReadSingle();
 
 			Assert.Equal(input, val);
 		}
@@ -181,9 +183,9 @@ namespace Salar.BinaryBuffers.Tests
 		public void ReadDouble(double input)
 		{
 			Reset();
-			_bufferWriter.Write(input);
+			_writer.Write(input);
 
-			var val = _reader.ReadDouble();
+			var val = _bufferReader.ReadDouble();
 
 			Assert.Equal(input, val);
 		}
@@ -204,9 +206,9 @@ namespace Salar.BinaryBuffers.Tests
 		{
 			Reset();
 			var input = Convert.ToDecimal(inputObj);
-			_bufferWriter.Write(input);
+			_writer.Write(input);
 
-			var val = _reader.ReadDecimal();
+			var val = _bufferReader.ReadDecimal();
 
 			Assert.Equal(input, val);
 		}
@@ -219,9 +221,9 @@ namespace Salar.BinaryBuffers.Tests
 		public void ReadByte(byte input)
 		{
 			Reset();
-			_bufferWriter.Write(input);
+			_writer.Write(input);
 
-			var val = _reader.ReadByte();
+			var val = _bufferReader.ReadByte();
 
 			Assert.Equal(input, val);
 		}
@@ -237,12 +239,37 @@ namespace Salar.BinaryBuffers.Tests
 			var element = (byte) (input / 2);
 			Array.Fill(buff, element);
 
-			_bufferWriter.Write(buff);
+			_writer.Write(buff);
 
-			var val = _reader.ReadBytes(input);
+			var val = _bufferReader.ReadBytes(input);
 
 			Assert.Equal(input, val.Length);
 			Assert.Equal(buff, val);
+		}
+
+
+		[Theory]
+		[InlineData(0)]
+		[InlineData(1)]
+		[InlineData(150)]
+		public void ReadSpan(int input)
+		{
+			Reset();
+			var buff = new byte[input];
+			var element = (byte) (input / 2);
+			var elementSpan = new ReadOnlySpan<byte>(buff);
+			Array.Fill(buff, element);
+
+			_writer.Write(buff);
+
+			var val = _bufferReader.ReadSpan(input);
+
+			Assert.Equal(input, val.Length);
+
+			for (int i = 0; i < buff.Length; i++)
+			{
+				Assert.Equal(buff[i], val[i]);
+			}
 		}
 
 		[Theory]
@@ -256,9 +283,9 @@ namespace Salar.BinaryBuffers.Tests
 		public void ReadSByte(sbyte input)
 		{
 			Reset();
-			_bufferWriter.Write(input);
+			_writer.Write(input);
 
-			var val = _reader.ReadSByte();
+			var val = _bufferReader.ReadSByte();
 
 			Assert.Equal(input, val);
 		}
@@ -269,9 +296,9 @@ namespace Salar.BinaryBuffers.Tests
 		public void ReadBoolean(bool input)
 		{
 			Reset();
-			_bufferWriter.Write(input);
+			_writer.Write(input);
 
-			var val = _reader.ReadBoolean();
+			var val = _bufferReader.ReadBoolean();
 
 			Assert.Equal(input, val);
 		}

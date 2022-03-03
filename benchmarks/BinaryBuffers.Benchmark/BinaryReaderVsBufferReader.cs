@@ -1,11 +1,10 @@
-﻿using System.IO;
-using BenchmarkDotNet.Attributes;
-
-// ReSharper disable InconsistentNaming
-
-namespace Salar.BinaryBuffers.Benchmark
+﻿namespace BinaryBuffers.Benchmark
 {
-	public abstract class BinaryReaderVsBufferReaderBase
+    using BenchmarkDotNet.Attributes;
+
+    using System.IO;
+
+    public abstract class BinaryReaderVsBufferReaderBase
 	{
 		protected const int Loops = 5_000_000;
 

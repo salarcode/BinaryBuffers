@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29215.179
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Salar.BinaryBuffers", "Salar.BinaryBuffers\Salar.BinaryBuffers.csproj", "{6AD5FC00-E696-42B6-AF13-3ED663C6D060}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BinaryBuffers", "src\BinaryBuffers\BinaryBuffers.csproj", "{6AD5FC00-E696-42B6-AF13-3ED663C6D060}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Salar.BinaryBuffers.Benchmark", "Salar.BinaryBuffers.Benchmark\Salar.BinaryBuffers.Benchmark.csproj", "{D98CCFA2-C4E4-405C-8192-F8A6C7AF08EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BinaryBuffers.Benchmark", "benchmarks\BinaryBuffers.Benchmark\BinaryBuffers.Benchmark.csproj", "{D98CCFA2-C4E4-405C-8192-F8A6C7AF08EF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salar.BinaryBuffers.Tests", "Salar.BinaryBuffers.Tests\Salar.BinaryBuffers.Tests.csproj", "{B81A8ADA-AF4E-4007-9066-DB7DE2496683}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryBuffers.Tests", "tests\BinaryBuffers.Tests\BinaryBuffers.Tests.csproj", "{B81A8ADA-AF4E-4007-9066-DB7DE2496683}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
