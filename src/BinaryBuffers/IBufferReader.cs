@@ -2,34 +2,81 @@
 {
     using System;
 
+    /// <summary>
+    /// Represents a reader that can read primitive data types from a binary data source.
+    /// </summary>
     public interface IBufferReader
     {
-        short ReadInt16();
+        /// <summary>
+        /// Reads a boolean value from the current binary stream and advances the current position within the stream by one byte.
+        /// </summary>
+        bool ReadBoolean();
 
-        ushort ReadUInt16();
-
-        int ReadInt32();
-
-        uint ReadUInt32();
-
-        long ReadInt64();
-
-        ulong ReadUInt64();
-
-        float ReadSingle();
-
-        double ReadDouble();
-
-        decimal ReadDecimal();
-
+        /// <summary>
+        /// Reads the next byte from the current binary stream and advances the current position within the stream by one byte.
+        /// </summary>
         byte ReadByte();
 
+        /// <summary>
+        /// Reads the specified number of bytes from the current binary stream into a byte array and advances the current position within the stream by that number of bytes.
+        /// </summary>
+        /// <param name="count">The number of bytes to read.</param>
         byte[] ReadBytes(int count);
 
-        ReadOnlySpan<byte> ReadSpan(int count);
+        /// <summary>
+        /// Reads a decimal value from the current binary stream and advances the current position within the stream by sixteen bytes.
+        /// </summary>
+        decimal ReadDecimal();
 
+        /// <summary>
+        /// Reads a double-precision floating-point number from the current binary stream and advances the current position within the stream by eight bytes.
+        /// </summary>
+        double ReadDouble();
+
+        /// <summary>
+        /// Reads a 16-bit signed integer from the current binary stream and advances the current position within the stream by two bytes.
+        /// </summary>
+        short ReadInt16();
+
+        /// <summary>
+        /// Reads a 32-bit signed integer from the current binary stream and advances the current position within the stream by four bytes.
+        /// </summary>
+        int ReadInt32();
+
+        /// <summary>
+        /// Reads a 63-bit signed integer from the current binary stream and advances the current position within the stream by eight bytes.
+        /// </summary>
+        long ReadInt64();
+
+        /// <summary>
+        /// Reads a signed byte from the current binary stream and advances the current position within the stream by one byte.
+        /// </summary>
         sbyte ReadSByte();
 
-        bool ReadBoolean();
+        /// <summary>
+        /// Reads single-precision floating-point number from the current binary stream and advances the current position within the stream by four bytes.
+        /// </summary>
+        float ReadSingle();
+
+        /// <summary>
+        /// Reads a span of bytes from the current binary stream and advances the current position within the stream by the number of bytes read.
+        /// </summary>
+        /// <param name="count">The number of bytes to read.</param>
+        ReadOnlySpan<byte> ReadSpan(int count);
+
+        /// <summary>
+        /// Reads a 16-bit unsigned integer from the current binary stream and advances the current position within the stream by two bytes.
+        /// </summary>
+        ushort ReadUInt16();
+
+        /// <summary>
+        /// Reads a 32-bit unsigned integer from the current binary stream and advances the current position within the stream by four bytes.
+        /// </summary>
+        uint ReadUInt32();
+
+        /// <summary>
+        /// Reads 64-bit unsigned integer from the current binary stream and advances the current position within the stream by eight bytes.
+        /// </summary>
+        ulong ReadUInt64();
     }
 }

@@ -304,6 +304,12 @@
         }
 
 
+        // TODO: Test ReadSpan 0 or negative - returns empty span
+        // TODO: Test Reader and Writer where length exceeds total length of underlying byte array
+
+        // TODO: Test all ArgumentOutOfRangeException cases
+
+
         public void Dispose()
         {
             _memoryStream?.Dispose();
