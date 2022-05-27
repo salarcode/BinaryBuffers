@@ -10,10 +10,19 @@
     {
         private readonly ReadOnlyMemory<byte> _data;
         private int _position;
-        private readonly int _length;
 
         /// <summary>
-        /// Gets or sets the current reading position within the underlying  <see cref="ReadOnlyMemory{T}"/>.
+        /// Gets the offset into the underlying <see cref="ReadOnlyMemory{T}"/> to start reading from.
+        /// </summary>
+        public int Offset { get; }
+
+        /// <summary>
+        /// Gets the effective length of the readable region of the underlying <see cref="ReadOnlyMemory{T}"/>.
+        /// </summary>
+        public int Length { get; }
+
+        /// <summary>
+        /// Gets or sets the current reading position within the underlying <see cref="ReadOnlyMemory{T}"/>.
         /// </summary>
         public int Position
         {
@@ -22,8 +31,8 @@
             {
                 var newPosition = _position + value;
 
-                if (newPosition < 0) ThrowHelper.ThrowPositionLessThanZeroException(nameof(value));
-                if (newPosition > _length) ThrowHelper.ThrowPositionGreaterThanLengthOfReadOnlyMemoryException(nameof(value));
+                if (newPosition < 0) throw ExceptionHelper.PositionLessThanZeroException(nameof(value));
+                if (newPosition > Length) throw ExceptionHelper.PositionGreaterThanLengthOfReadOnlyMemoryException(nameof(value));
 
                 _position = newPosition;
             }
@@ -39,7 +48,8 @@
         {
             _data = data;
             _position = 0;
-            _length = data.Length;
+            Offset = 0;
+            Length = data.Length;
         }
 
         /// <summary>
@@ -78,7 +88,7 @@
             catch (ArgumentException e)
             {
                 // ReadDecimal cannot leak out ArgumentException
-                throw ThrowHelper.ThrowDecimalReadingException(e);
+                throw ExceptionHelper.DecimalReadingException(e);
             }
         }
 
@@ -147,18 +157,18 @@
         /// </summary>
         protected byte InternalReadByte()
         {
-            int origPos = _position;
-            int newPos = origPos + 1;
+            int curPos = _position;
+            int newPos = curPos + 1;
 
-            if ((uint) newPos > (uint) _length)
+            if ((uint)newPos > (uint)Length)
             {
-                _position = _length;
-                ThrowHelper.ThrowEndOfDataException();
+                _position = Length;
+                throw ExceptionHelper.EndOfDataException();
             }
 
-            var b = _data.Span[origPos];
             _position = newPos;
-            return b;
+
+            return _data.Span[curPos];
         }
 
         /// <summary>
@@ -169,19 +179,18 @@
         {
             if (count <= 0) return ReadOnlySpan<byte>.Empty;
 
-            int origPos = _position;
-            int newPos = origPos + count;
+            int curPos = _position;
+            int newPos = curPos + count;
 
-            if ((uint) newPos > (uint) _length)
+            if ((uint)newPos > (uint) Length)
             {
-                _position = _length;
-                ThrowHelper.ThrowEndOfDataException();
+                _position = Length;
+                throw ExceptionHelper.EndOfDataException();
             }
 
-            var slice = _data.Slice(origPos, count);
             _position = newPos;
 
-            return slice.Span;
+            return _data.Slice(curPos, count).Span;
         }
     }
 }

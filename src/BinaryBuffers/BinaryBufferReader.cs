@@ -9,23 +9,33 @@
     public class BinaryBufferReader : IBufferReader
     {
         private readonly byte[] _data;
+        private int _relativePositon;
         private int _position;
-        private readonly int _originalPosition;
-        private readonly int _length;
+
+        /// <summary>
+        /// Gets the offset into the underlying byte array to start reading from.
+        /// </summary>
+        public int Offset { get; }
+
+        /// <summary>
+        /// Gets the effective length of the readable region of the underlying byte array.
+        /// </summary>
+        public int Length { get; }
 
         /// <summary>
         /// Gets or sets the current reading position within the underlying byte array.
         /// </summary>
         public int Position
         {
-            get => _position;
+            get => _relativePositon;
             set
             {
-                var newPosition = _originalPosition + value;
+                var newPosition = Offset + value;
 
-                if (newPosition < 0) ThrowHelper.ThrowPositionLessThanZeroException(nameof(value));
-                if (newPosition > _length) ThrowHelper.ThrowPositionGreaterThanLengthOfByteArrayException(nameof(value));
+                if (value < 0) throw ExceptionHelper.PositionLessThanZeroException(nameof(value));
+                if (value > Length) throw ExceptionHelper.PositionGreaterThanLengthOfByteArrayException(nameof(value));
 
+                _relativePositon = value;
                 _position = newPosition;
             }
         }
@@ -39,8 +49,9 @@
         {
             _data = data ?? throw new ArgumentNullException(nameof(data));
             _position = 0;
-            _originalPosition = 0;
-            _length = data.Length;
+            _relativePositon = 0;
+            Offset = 0;
+            Length = data.Length;
         }
 
         /// <summary>
@@ -50,20 +61,20 @@
         /// <param name="data">The byte array to read from.</param>
         /// <param name="offset">The 0-based offset into the byte array at which to begin reading from.
         /// <para>Cannot exceed the bounds of the byte array.</para></param>
-        /// <param name="length">Specifies the maximum number of bytes that the reader will use for reading, relative to the offset position.
+        /// <param name="length">The maximum number of bytes that the reader will use for reading, relative to the offset position.
         /// <para>Cannot exceed the bounds of the byte array.</para></param>
         public BinaryBufferReader(byte[] data, int offset, int length)
         {
             _data = data ?? throw new ArgumentNullException(nameof(data));
 
-            if (offset < 0) ThrowHelper.ThrowOffsetLessThanZeroException(nameof(offset));
-            if (offset >= _length) ThrowHelper.ThrowOffsetGreaterThanLengthOfByteArrayException(nameof(offset));
-            if (length < 0) ThrowHelper.ThrowLengthLessThanZeroException(nameof(length));
-            if (offset + length > _data.Length) ThrowHelper.ThrowOffsetPlusLengthGreaterThanLengthOfByteArrayException();
+            if (offset < 0) throw ExceptionHelper.OffsetLessThanZeroException(nameof(offset));
+            if (length < 0) throw ExceptionHelper.LengthLessThanZeroException(nameof(length));
+            if (length > _data.Length - offset) throw ExceptionHelper.LengthGreaterThanEffectiveLengthOfByteArrayException();
 
             _position = offset;
-            _originalPosition = offset;
-            _length = length;
+            _relativePositon = 0;
+            Offset = offset;
+            Length = length;
         }
 
         /// <summary>
@@ -74,8 +85,9 @@
         {
             _data = data.Array ?? throw new ArgumentNullException(nameof(data));
             _position = data.Offset;
-            _originalPosition = _position;
-            _length = data.Count;
+            _relativePositon = 0;
+            Offset = data.Offset;
+            Length = data.Count;
         }
 
         
@@ -115,7 +127,7 @@
             catch (ArgumentException e)
             {
                 // ReadDecimal cannot leak out ArgumentException
-                throw ThrowHelper.ThrowDecimalReadingException(e);
+                throw ExceptionHelper.DecimalReadingException(e);
             }
         }
 
@@ -186,19 +198,20 @@
         /// </summary>
         protected byte InternalReadByte()
         {
-            int origPos = _position;
-            int newPos = origPos + 1;
+            int curPos = _position;
+            int newPos = curPos + 1;
+            int relPos = _relativePositon + 1;
 
-            if ((uint) newPos > (uint) _length)
+            if ((uint)relPos > (uint)Length)
             {
-                _position = _length;
-                ThrowHelper.ThrowEndOfDataException();
+                _relativePositon = Length;
+                throw ExceptionHelper.EndOfDataException();
             }
 
-            var b = _data[origPos];
+            _relativePositon = relPos;
             _position = newPos;
 
-            return b;
+            return _data[curPos];
         }
 
         /// <summary>
@@ -209,19 +222,20 @@
         {
             if (count <= 0) return ReadOnlySpan<byte>.Empty;
 
-            int origPos = _position;
-            int newPos = origPos + count;
+            int curPos = _position;
+            int newPos = curPos + count;
+            int relPos = _relativePositon + count;
 
-            if ((uint) newPos > (uint) _length)
+            if ((uint)relPos > (uint) Length)
             {
-                _position = _length;
-                ThrowHelper.ThrowEndOfDataException();
+                _relativePositon = Length;
+                throw ExceptionHelper.EndOfDataException();
             }
 
-            var span = new ReadOnlySpan<byte>(_data, origPos, count);
+            _relativePositon = relPos;
             _position = newPos;
 
-            return span;
+            return new ReadOnlySpan<byte>(_data, curPos, count);
         }
     }
 }

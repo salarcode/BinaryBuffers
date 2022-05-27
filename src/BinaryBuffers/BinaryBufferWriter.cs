@@ -10,28 +10,38 @@
     {
         private readonly byte[] _buffer;
         private int _position;
-        private readonly int _originalPosition;
-        private readonly int _length;
+        private int _relativePositon;
 
         /// <summary>
-        /// Gets or sets the current reading position within the underlying byte array.
+        /// Gets the offset into the underlying byte array to start writing from.
+        /// </summary>
+        public int Offset { get; }
+
+        /// <summary>
+        /// Gets the effective length of the writable region of the underlying byte array.
+        /// </summary>
+        public int Length { get; }
+
+        /// <summary>
+        /// Gets or sets the current writing position within the underlying byte array.
         /// </summary>
         public int Position
         {
-            get => _position;
+            get => _relativePositon;
             set
             {
-                var newPosition = _originalPosition + value;
+                var newPosition = Offset + value;
 
-                if (newPosition < 0) ThrowHelper.ThrowPositionLessThanZeroException(nameof(value));
-                if (newPosition > _length) ThrowHelper.ThrowPositionGreaterThanLengthOfByteArrayException(nameof(value));
+                if (value < 0) throw ExceptionHelper.PositionLessThanZeroException(nameof(value));
+                if (value > Length) throw ExceptionHelper.PositionGreaterThanLengthOfByteArrayException(nameof(value));
 
+                _relativePositon = value;
                 _position = newPosition;
             }
         }
 
         /// <summary>
-        /// Returns the total bytes written to the underlying byte array.
+        /// Gets the total number of bytes written to the underlying byte array.
         /// </summary>
         public int WrittenLength { get; private set; }
 
@@ -41,10 +51,11 @@
         /// <param name="buffer">The byte array to write to.</param>
         public BinaryBufferWriter(byte[] buffer)
         {
-            _buffer = buffer;
+            _buffer = buffer ?? throw new ArgumentNullException(nameof(buffer));
             _position = 0;
-            _originalPosition = 0;
-            _length = buffer.Length;
+            _relativePositon = 0;
+            Offset = 0;
+            Length = buffer.Length;
         }
 
         /// <summary>
@@ -54,20 +65,20 @@
         /// <param name="buffer">The output buffer to write to.</param>
         /// <param name="offset">The 0-based offset into the byte array at which to begin writing from.
         /// <para>Cannot exceed the bounds of the byte array.</para></param>
-        /// <param name="length">Specifies the maximum number of bytes that the writer will use for writing, relative to the offset position.
+        /// <param name="length">The maximum number of bytes that the writer will use for writing, relative to the offset position.
         /// <para>Cannot exceed the bounds of the byte array.</para></param>
         public BinaryBufferWriter(byte[] buffer, int offset, int length)
         {
             _buffer = buffer ?? throw new ArgumentNullException(nameof(buffer));
 
-            if (offset < 0) ThrowHelper.ThrowOffsetLessThanZeroException(nameof(offset));
-            if (offset >= _length) ThrowHelper.ThrowOffsetGreaterThanLengthOfByteArrayException(nameof(offset));
-            if (length < 0) ThrowHelper.ThrowLengthLessThanZeroException(nameof(length));
-            if (offset + length > _buffer.Length) ThrowHelper.ThrowOffsetPlusLengthGreaterThanLengthOfByteArrayException();
+            if (offset < 0) throw ExceptionHelper.OffsetLessThanZeroException(nameof(offset));
+            if (length < 0) throw ExceptionHelper.LengthLessThanZeroException(nameof(length));
+            if (length > _buffer.Length - offset) throw ExceptionHelper.LengthGreaterThanEffectiveLengthOfByteArrayException();
 
             _position = offset;
-            _originalPosition = offset;
-            _length = length;
+            _relativePositon = 0;
+            Offset = offset;
+            Length = length;
         }
 
         /// <summary>
@@ -244,8 +255,6 @@
         /// <param name="buffer">The span of bytes to write.</param>
         public virtual void Write(in ReadOnlySpan<byte> buffer)
         {
-            if (buffer.ToArray() == null) throw new ArgumentNullException(nameof(buffer));
-
             var pos = _position;
             var length = buffer.Length;
             Advance(length);
@@ -304,7 +313,7 @@
         /// <summary>
         /// Creates a span over the underlying byte array of the writer.
         /// </summary>
-        public ReadOnlySpan<byte> ToReadOnlySpan() => new ReadOnlySpan<byte>(_buffer, _originalPosition, WrittenLength);
+        public ReadOnlySpan<byte> ToReadOnlySpan() => new ReadOnlySpan<byte>(_buffer, Offset, WrittenLength);
 
         /// <summary>
         /// Returns the underlying byte array of the writer.
@@ -324,16 +333,18 @@
         private void Advance(int count)
         {
             var newPos = _position + count;
+            int relPos = _relativePositon + count;
 
-            if ((uint)newPos > (uint)_length)
+            if ((uint)relPos > (uint)Length)
             {
-                _position = _length;
-                ThrowHelper.ThrowEndOfDataException();
+                _relativePositon = Length;
+                throw ExceptionHelper.EndOfDataException();
             }
 
+            _relativePositon = relPos;
             _position = newPos;
 
-            WrittenLength = Math.Max(_position - _originalPosition, WrittenLength);
+            if (count > 0) WrittenLength = Math.Max(_relativePositon, WrittenLength);
         }
     }
 }

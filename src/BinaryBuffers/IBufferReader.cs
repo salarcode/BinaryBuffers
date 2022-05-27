@@ -8,6 +8,21 @@
     public interface IBufferReader
     {
         /// <summary>
+        /// Gets the offset into the stream to start reading from.
+        /// </summary>
+        int Offset { get; }
+
+        /// <summary>
+        /// Gets the effective length of the readable region of the stream.
+        /// </summary>
+        int Length { get; }
+
+        /// <summary>
+        /// Gets or sets the current reading position within the stream.
+        /// </summary>
+        int Position { get; }
+
+        /// <summary>
         /// Reads a boolean value from the current binary stream and advances the current position within the stream by one byte.
         /// </summary>
         bool ReadBoolean();
