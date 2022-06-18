@@ -116,13 +116,19 @@
             var buffer = InternalReadSpan(16);
             try
             {
-                return new decimal(new[]
-                {
-                    BinaryPrimitives.ReadInt32LittleEndian(buffer), // lo
-                    BinaryPrimitives.ReadInt32LittleEndian(buffer.Slice(4)), // mid
-                    BinaryPrimitives.ReadInt32LittleEndian(buffer.Slice(8)), // hi
-                    BinaryPrimitives.ReadInt32LittleEndian(buffer.Slice(12)) // flags
-                });
+                return new decimal(
+#if NET6_0_OR_GREATER
+                                   stackalloc 
+#else
+                                   new
+#endif
+                                   []
+                                   {
+                                       BinaryPrimitives.ReadInt32LittleEndian(buffer),          // lo
+                                       BinaryPrimitives.ReadInt32LittleEndian(buffer.Slice(4)), // mid
+                                       BinaryPrimitives.ReadInt32LittleEndian(buffer.Slice(8)), // hi
+                                       BinaryPrimitives.ReadInt32LittleEndian(buffer.Slice(12)) // flags
+                                   });
             }
             catch (ArgumentException e)
             {
