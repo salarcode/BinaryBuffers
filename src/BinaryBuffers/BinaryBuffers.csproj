@@ -8,13 +8,12 @@
     <Copyright>Copyright © 2022</Copyright>
     <Description>A high-performance implementation of BinaryReader and BinaryWriter which works on binary arrays directly by eliminating the need for an intermediate stream object.</Description>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <AssemblyVersion>2.0.1.0</AssemblyVersion>
-    <Version>2.0.1</Version>
+    <AssemblyVersion>2.0.2.0</AssemblyVersion>
+    <Version>2.0.2</Version>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="System.Memory" Version="4.5.5" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
