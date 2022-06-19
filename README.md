@@ -1,26 +1,26 @@
 # BinaryBuffers
-A high performance implementation of BinaryReader and BinaryWriter which works on binary arrays directly by eliminating the need of a middle man Stream.
 
-## [NuGet Package](https://www.nuget.org/packages/Salar.BinaryBuffers)
-```
-PM> Install-Package Salar.BinaryBuffers
-```
+![logo](https://github.com/silkfire/BinaryBuffers/blob/master/img/logo.png)
 
-# How to Use
+[![NuGet](https://img.shields.io/nuget/v/BinaryBuffers.svg)](https://www.nuget.org/packages/BinaryBuffers)
 
-BinaryBufferReader and BinaryBufferWriter are available right after you install the packge. Unlike BinaryReader, the BinaryBuffer classes work directly with the buffer array.
+BinaryBuffers offers a highly performant implementation of `BinaryReader` and `BinaryWriter`, working directly on a `byte` array, thus eliminating the need for an intermediate `Stream` object.
+
+# How to use
+
+`BinaryBufferReader` and `BinaryBufferWriter` are the respective names of the reader and writer. Unlike `BinaryReader`, these classes operate directly on the underlying buffer array (`byte[]`).
 
 ```csharp
-// the buffer
+// The  buffer of the reader/writer
 var buffer = new byte[100];
 
-// writing to buffer
+// Writing to the buffer
 var writer = new BinaryBufferWriter(buffer);
 
 writer.Write(2019);
 writer.Write(8.11);
 
-// reading
+// Reading from the buffer
 var reader = new BinaryBufferReader(buffer);
 
 var year = reader.ReadInt32();
@@ -29,30 +29,39 @@ var time = reader.ReadDouble();
 
 # Benchmarks
 
-## BinaryBufferReader Benchmarks
+Runtime is **.NET 6** running on a CPU with 16 cores.
 
-|               Method |      Mean |     Error |    StdDev | Ratio |
-|--------------------- |----------:|----------:|----------:|------:|
-| BinaryReader_ReadInt | 152.47 ms | 0.6484 ms | 0.6065 ms |  1.00 |
-| BufferReader_ReadInt |  49.15 ms | 0.2015 ms | 0.1885 ms |  0.32 |
+## BinaryBufferReader
 
+|               Method |     Mean |    Error |   StdDev |    Ratio | RatioSD |
+|--------------------- |---------:|---------:|---------:|---------:|--------:|
+| BinaryReader_ReadInt | 39.08 ms | 0.563 ms | 0.527 ms | baseline |         |
+| BufferReader_ReadInt | 33.80 ms | 0.055 ms | 0.049 ms |     -14% |    1.3% |
 
-|                   Method |     Mean |     Error |    StdDev | Ratio |
-|------------------------- |---------:|----------:|----------:|------:|
-|   BinaryReader_ReadFloat | 86.75 ms | 0.3637 ms | 0.3224 ms |  1.00 |
-|   BufferReader_ReadFloat | 31.78 ms | 0.1566 ms | 0.1465 ms |  0.37 |
+|                   Method |     Mean |    Error |   StdDev |    Ratio | RatioSD |
+|------------------------- |---------:|---------:|---------:|---------:|--------:|
+| BinaryReader_ReadDecimal | 44.93 ms | 0.275 ms | 0.244 ms | baseline |         |
+| BufferReader_ReadDecimal | 37.73 ms | 0.079 ms | 0.074 ms |     -16% |    0.5% |
 
-
-## BinaryBufferWriter Benchmarks
-
-
-|                Method |      Mean |     Error |    StdDev | Ratio |
-|---------------------- |----------:|----------:|----------:|------:|
-| BinaryWriter_WriteInt | 185.77 ms | 0.7258 ms | 0.6789 ms |  1.00 |
-| BufferWriter_WriteInt |  64.78 ms | 0.2940 ms | 0.2750 ms |  0.35 |
+|                 Method |     Mean |    Error |   StdDev |    Ratio | RatioSD |
+|----------------------- |---------:|---------:|---------:|---------:|--------:|
+| BinaryReader_ReadFloat | 22.48 ms | 0.051 ms | 0.047 ms | baseline |         |
+| BufferReader_ReadFloat | 19.05 ms | 0.016 ms | 0.014 ms |     -15% |    0.2% |
 
 
-|                  Method |     Mean |     Error |    StdDev | Ratio |
-|------------------------ |---------:|----------:|----------:|------:|
-| BinaryWriter_WriteFloat | 83.79 ms | 0.3845 ms | 0.3597 ms |  1.00 |
-| BufferWriter_WriteFloat | 35.62 ms | 0.1663 ms | 0.1474 ms |  0.43 |
+## BinaryBufferWriter
+
+|                Method |     Mean |    Error |   StdDev |    Ratio | RatioSD |
+|---------------------- |---------:|---------:|---------:|---------:|--------:|
+| BinaryWriter_WriteInt | 66.61 ms | 0.102 ms | 0.096 ms | baseline |         |
+| BufferWriter_WriteInt | 33.77 ms | 0.085 ms | 0.075 ms |     -49% |    0.3% |
+
+|                    Method |     Mean |    Error |   StdDev |    Ratio | RatioSD |
+|-------------------------- |---------:|---------:|---------:|---------:|--------:|
+| BinaryWriter_WriteDecimal | 41.44 ms | 0.159 ms | 0.149 ms | baseline |         |
+| BufferWriter_WriteDecimal | 17.14 ms | 0.047 ms | 0.044 ms |     -59% |    0.6% |
+
+|                  Method |     Mean |    Error |   StdDev |    Ratio | RatioSD |
+|------------------------ |---------:|---------:|---------:|---------:|--------:|
+| BinaryWriter_WriteFloat | 33.94 ms | 0.080 ms | 0.071 ms | baseline |         |
+| BufferWriter_WriteFloat | 18.08 ms | 0.051 ms | 0.047 ms |     -47% |    0.3% |

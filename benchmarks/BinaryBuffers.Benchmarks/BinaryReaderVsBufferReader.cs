@@ -1,4 +1,4 @@
-﻿namespace BinaryBuffers.Benchmark
+﻿namespace BinaryBuffers.Benchmarks
 {
     using BenchmarkDotNet.Attributes;
 

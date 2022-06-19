@@ -1,4 +1,4 @@
-﻿namespace BinaryBuffers.Benchmark.Configurations
+﻿namespace BinaryBuffers.Benchmarks.Configurations
 {
     using BenchmarkDotNet.Columns;
     using BenchmarkDotNet.Configs;

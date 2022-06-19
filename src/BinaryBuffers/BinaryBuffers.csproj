@@ -4,12 +4,12 @@
     <TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
     <Authors>Gabriel Bider, Salar Khalilzadeh</Authors>
     <PackageTags>binary buffers binaryreader binarywriter binaryprimitives</PackageTags>
-    <PackageProjectUrl>https://github.com/salarcode/BinaryBuffers</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/silkfire/BinaryBuffers</PackageProjectUrl>
     <Copyright>Copyright © 2022</Copyright>
     <Description>A high-performance implementation of BinaryReader and BinaryWriter which works on binary arrays directly by eliminating the need for an intermediate stream object.</Description>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <AssemblyVersion>2.0.0.0</AssemblyVersion>
-    <Version>2.0.0</Version>
+    <AssemblyVersion>2.0.1.0</AssemblyVersion>
+    <Version>2.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
