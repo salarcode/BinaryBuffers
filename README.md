@@ -17,7 +17,7 @@ var buffer = new byte[100];
 // Write to the buffer
 var writer = new BinaryBufferWriter(buffer);
 
-writer.Write(2019);
+writer.Write(2022);
 writer.Write(8.11);
 
 // Read from the buffer
