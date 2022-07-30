@@ -1,8 +1,8 @@
 # BinaryBuffers
 
-![logo](https://github.com/silkfire/BinaryBuffers/blob/master/img/logo.png)
+![logo](https://github.com/salarcode/BinaryBuffers/blob/master/img/logo.png)
 
-[![NuGet](https://img.shields.io/nuget/v/BinaryBuffers.svg)](https://www.nuget.org/packages/BinaryBuffers)
+[![NuGet](https://img.shields.io/nuget/v/Salar.BinaryBuffers.svg)](https://www.nuget.org/packages/Salar.BinaryBuffers)
 
 BinaryBuffers offers a highly performant implementation of `BinaryReader` and `BinaryWriter`, working directly on a `byte` array, thus eliminating the need for an intermediate `Stream` object.
 

@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFrameworks>net6.0</TargetFrameworks>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Remove="BenchmarkDotNet.Artifacts\**" />
+		<EmbeddedResource Remove="BenchmarkDotNet.Artifacts\**" />
+		<None Remove="BenchmarkDotNet.Artifacts\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="BenchmarkDotNet" Version="0.13.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Salar.BinaryBuffers\Salar.BinaryBuffers.csproj" />
+	</ItemGroup>
+
+</Project>
