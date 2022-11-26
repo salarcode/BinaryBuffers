@@ -1,4 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
+using Salar.BinaryBuffers.Compatibility;
 using System.IO;
 
 namespace Salar.BinaryBuffers.Benchmarks;
@@ -10,6 +11,7 @@ public abstract class BinaryReaderVsBufferReaderBase
 	protected readonly MemoryStream _memoryStream;
 	protected readonly BinaryReader _binaryReader;
 	protected readonly BinaryBufferReader _bufferReader;
+	protected readonly StreamBufferReader _streamBufferReader;
 
 	protected BinaryReaderVsBufferReaderBase()
 	{
@@ -17,6 +19,7 @@ public abstract class BinaryReaderVsBufferReaderBase
 		_memoryStream = new MemoryStream(buffer);
 		_binaryReader = new BinaryReader(_memoryStream);
 		_bufferReader = new BinaryBufferReader(buffer);
+		_streamBufferReader = new StreamBufferReader(_memoryStream);
 	}
 }
 
@@ -45,6 +48,18 @@ public class BinaryReaderVsBufferReader_Int : BinaryReaderVsBufferReaderBase
 			_bufferReader.ReadInt64();
 		}
 	}
+
+	[Benchmark]
+	public void StreamBufferReader_ReadInt()
+	{
+		for (int i = 0; i < Loops; i++)
+		{
+			_memoryStream.Position = 0;
+
+			_streamBufferReader.ReadInt32();
+			_streamBufferReader.ReadInt64();
+		}
+	}
 }
 
 public class BinaryReaderVsBufferReader_Decimal : BinaryReaderVsBufferReaderBase
@@ -60,7 +75,6 @@ public class BinaryReaderVsBufferReader_Decimal : BinaryReaderVsBufferReaderBase
 		}
 	}
 
-
 	[Benchmark]
 	public void BufferReader_ReadDecimal()
 	{
@@ -69,6 +83,17 @@ public class BinaryReaderVsBufferReader_Decimal : BinaryReaderVsBufferReaderBase
 			_bufferReader.Position = 0;
 
 			_bufferReader.ReadDecimal();
+		}
+	}
+
+	[Benchmark]
+	public void StreamBufferReader_ReadDecimal()
+	{
+		for (int i = 0; i < Loops; i++)
+		{
+			_memoryStream.Position = 0;
+
+			_streamBufferReader.ReadDecimal();
 		}
 	}
 }
@@ -86,7 +111,6 @@ public class BinaryReaderVsBufferReader_Float : BinaryReaderVsBufferReaderBase
 		}
 	}
 
-
 	[Benchmark]
 	public void BufferReader_ReadFloat()
 	{
@@ -95,6 +119,17 @@ public class BinaryReaderVsBufferReader_Float : BinaryReaderVsBufferReaderBase
 			_bufferReader.Position = 0;
 
 			_bufferReader.ReadSingle();
+		}
+	}
+
+	[Benchmark]
+	public void StreamBufferReader_ReadFloat()
+	{
+		for (int i = 0; i < Loops; i++)
+		{
+			_memoryStream.Position = 0;
+
+			_streamBufferReader.ReadSingle();
 		}
 	}
 }
