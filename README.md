@@ -27,6 +27,11 @@ var year = reader.ReadInt32();
 var time = reader.ReadDouble();
 ```
 
+## Additional Goodies
+Use `StreamBufferReader` as a drop in replacement for `BinaryReader`. Note that there is no performance benefit in using `StreamBufferReader`, it just helps widen the use of `IBufferReader`.
+
+Use `ResetBuffer` method in `BinaryBufferReader` instead of creating a new one and have less allocations!
+
 # Benchmarks
 
 Benchmarks shows up to 59% improvement in writing and 32% in reading.
