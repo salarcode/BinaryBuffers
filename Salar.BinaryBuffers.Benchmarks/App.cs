@@ -7,7 +7,7 @@ public static class App
 {
 	public static void Main()
 	{
-		//BenchmarkSwitcher.FromAssembly(typeof(App).Assembly).Run(config: new PerformanceConfig());
-		BenchmarkRunner.Run(typeof(App).Assembly, new PerformanceConfig());
+		BenchmarkSwitcher.FromAssembly(typeof(App).Assembly).Run(config: new PerformanceConfig());
+		//BenchmarkRunner.Run(typeof(App).Assembly, new PerformanceConfig());
 	}
 }

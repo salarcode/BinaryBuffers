@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Buffers.Binary;
+using System.Linq.Expressions;
+using System.Reflection;
 
 namespace Salar.BinaryBuffers;
 
@@ -8,6 +10,24 @@ namespace Salar.BinaryBuffers;
 /// </summary>
 public abstract class BufferReaderBase : IBufferReader
 {
+#if NET6_0_OR_GREATER && DISABLED
+	private static Func<int, int, int, int, decimal> _decimalCtor;
+
+	static void InitializeDecimalReader()
+	{
+		var ctor = typeof(decimal).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, new[] { typeof(int), typeof(int), typeof(int), typeof(int) });
+		if (ctor == null)
+			return;
+		var lo = Expression.Parameter(typeof(int), "lo");
+		var mid = Expression.Parameter(typeof(int), "mid");
+		var hi = Expression.Parameter(typeof(int), "hi");
+		var flags = Expression.Parameter(typeof(int), "flags");
+
+		var expressionNew = Expression.New(ctor, lo, mid, hi, flags);
+		_decimalCtor = Expression.Lambda<Func<int, int, int, int, decimal>>(expressionNew, lo, mid, hi, flags).Compile();
+	}
+#endif
+
 	/// <inheritdoc/>
 	public abstract int Offset { get; }
 
