@@ -39,6 +39,20 @@ public interface IBufferReader
 	byte[] ReadBytes(int count);
 
 	/// <summary>
+	/// Reads the specified number of bytes from the current binary stream, starting from a specified point in the byte array.
+	/// </summary>
+	/// <returns>
+	/// The number of bytes read into buffer. This might be less than the number of bytes requested if that many bytes are not available, or it might be zero if the end of the stream is reached.
+	/// </returns>
+	int Read(byte[] buffer, int index, int count);
+
+	/// <summary>
+	/// Reads a span of bytes from the current binary stream and advances the current position within the stream by the number of bytes read.
+	/// </summary>
+	/// <param name="count">The number of bytes to read.</param>
+	ReadOnlySpan<byte> ReadSpan(int count);
+
+	/// <summary>
 	/// Reads a decimal value from the current binary stream and advances the current position within the stream by sixteen bytes.
 	/// </summary>
 	decimal ReadDecimal();
@@ -72,12 +86,6 @@ public interface IBufferReader
 	/// Reads single-precision floating-point number from the current binary stream and advances the current position within the stream by four bytes.
 	/// </summary>
 	float ReadSingle();
-
-	/// <summary>
-	/// Reads a span of bytes from the current binary stream and advances the current position within the stream by the number of bytes read.
-	/// </summary>
-	/// <param name="count">The number of bytes to read.</param>
-	ReadOnlySpan<byte> ReadSpan(int count);
 
 	/// <summary>
 	/// Reads a 16-bit unsigned integer from the current binary stream and advances the current position within the stream by two bytes.
