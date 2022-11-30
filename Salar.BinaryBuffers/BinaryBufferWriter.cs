@@ -14,8 +14,9 @@ public class BinaryBufferWriter : IBufferWriter
 	private byte[] _buffer;
 	private int _position;
 	private int _relativePositon;
-	private  int _length;
-	private  int _offset;
+	private int _length;
+	private int _offset;
+	private int _writtenLength;
 
 	/// <inheritdoc/>
 	public int Offset => _offset;
@@ -42,7 +43,7 @@ public class BinaryBufferWriter : IBufferWriter
 	/// <summary>
 	/// Gets the total number of bytes written to the underlying byte array.
 	/// </summary>
-	public int WrittenLength { get; private set; }
+	public int WrittenLength => _writtenLength;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="BinaryBufferWriter"/> class using the specified byte array to write the output to.
@@ -78,6 +79,7 @@ public class BinaryBufferWriter : IBufferWriter
 		_relativePositon = 0;
 		_offset = 0;
 		_length = buffer.Length;
+		_writtenLength = 0;
 	}
 
 	/// <summary>
@@ -101,6 +103,7 @@ public class BinaryBufferWriter : IBufferWriter
 		_relativePositon = 0;
 		_offset = offset;
 		_length = length;
+		_writtenLength = 0;
 	}
 
 	/// <summary>
@@ -381,7 +384,12 @@ public class BinaryBufferWriter : IBufferWriter
 	/// <summary>
 	/// Creates a span over the underlying byte array of the writer.
 	/// </summary>
-	public ReadOnlySpan<byte> ToReadOnlySpan() => new(_buffer, _offset, WrittenLength);
+	public ReadOnlySpan<byte> ToReadOnlySpan() => new(_buffer, _offset, _writtenLength);
+
+	/// <summary>
+	/// Creates a span over the underlying byte array of the writer.
+	/// </summary>
+	public ArraySegment<byte> ToArraySegment() => new(_buffer, _offset, _writtenLength);
 
 	/// <summary>
 	/// Returns the underlying byte array of the writer.
@@ -414,6 +422,6 @@ public class BinaryBufferWriter : IBufferWriter
 		_relativePositon = relPos;
 		_position = newPos;
 
-		if (count > 0) WrittenLength = Math.Max(_relativePositon, WrittenLength);
+		if (count > 0) _writtenLength = Math.Max(_relativePositon, _writtenLength);
 	}
 }

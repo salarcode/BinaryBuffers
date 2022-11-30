@@ -2,6 +2,8 @@
 using System.Buffers.Binary;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace Salar.BinaryBuffers;
 
@@ -68,16 +70,32 @@ public abstract class BufferReaderBase : IBufferReader
 	}
 
 	/// <inheritdoc/>
-	public double ReadDouble() => BitConverter.Int64BitsToDouble(BinaryPrimitives.ReadInt64LittleEndian(InternalReadSpan(8)));
+	public double ReadDouble()
+	{
+		var span = InternalReadSpan(8);
+		return Unsafe.ReadUnaligned<double>(ref MemoryMarshal.GetReference<byte>(span));
+	}
 
 	/// <inheritdoc/>
-	public short ReadInt16() => BinaryPrimitives.ReadInt16LittleEndian(InternalReadSpan(2));
+	public short ReadInt16()
+	{
+		var span = InternalReadSpan(2);
+		return Unsafe.ReadUnaligned<short>(ref MemoryMarshal.GetReference<byte>(span));
+	}
 
 	/// <inheritdoc/>
-	public int ReadInt32() => BinaryPrimitives.ReadInt32LittleEndian(InternalReadSpan(4));
+	public int ReadInt32()
+	{
+		var span = InternalReadSpan(4);
+		return Unsafe.ReadUnaligned<int>(ref MemoryMarshal.GetReference<byte>(span));
+	}
 
 	/// <inheritdoc/>
-	public long ReadInt64() => BinaryPrimitives.ReadInt64LittleEndian(InternalReadSpan(8));
+	public long ReadInt64()
+	{
+		var span = InternalReadSpan(8);
+		return Unsafe.ReadUnaligned<long>(ref MemoryMarshal.GetReference<byte>(span));
+	}
 
 	/// <inheritdoc/>
 	public sbyte ReadSByte() => (sbyte)InternalReadByte();
@@ -92,17 +110,33 @@ public abstract class BufferReaderBase : IBufferReader
 		return *((float*)&tmpBuffer);
 	}
 #else
-	public float ReadSingle() => BitConverter.Int32BitsToSingle(BinaryPrimitives.ReadInt32LittleEndian(InternalReadSpan(4)));
+	public float ReadSingle()
+	{
+		var span = InternalReadSpan(4);
+		return Unsafe.ReadUnaligned<float>(ref MemoryMarshal.GetReference<byte>(span)); 
+	}
 #endif
 
 	/// <inheritdoc/>
-	public ushort ReadUInt16() => BinaryPrimitives.ReadUInt16LittleEndian(InternalReadSpan(2));
+	public ushort ReadUInt16()
+	{
+		var span = InternalReadSpan(2);
+		return Unsafe.ReadUnaligned<ushort>(ref MemoryMarshal.GetReference<byte>(span));
+	}
 
 	/// <inheritdoc/>
-	public uint ReadUInt32() => BinaryPrimitives.ReadUInt32LittleEndian(InternalReadSpan(4));
+	public uint ReadUInt32()
+	{
+		var span = InternalReadSpan(4);
+		return Unsafe.ReadUnaligned<uint>(ref MemoryMarshal.GetReference<byte>(span));
+	}
 
 	/// <inheritdoc/>
-	public ulong ReadUInt64() => BinaryPrimitives.ReadUInt64LittleEndian(InternalReadSpan(8));
+	public ulong ReadUInt64()
+	{
+		var span = InternalReadSpan(8);
+		return Unsafe.ReadUnaligned<ulong>(ref MemoryMarshal.GetReference<byte>(span));
+	}
 
 	/// <summary>
 	/// Reads the next byte from the underlying byte stream and advances the current position by one byte.
