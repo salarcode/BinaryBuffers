@@ -111,5 +111,5 @@ public interface IBufferWriter
 	/// Copies a span of bytes to the underlying byte array and advances the current position by the number of bytes written.
 	/// </summary>
 	/// <param name="buffer">The span of bytes to write.</param>
-	void Write(in ReadOnlySpan<byte> buffer);
+	void Write(ReadOnlySpan<byte> buffer);
 }

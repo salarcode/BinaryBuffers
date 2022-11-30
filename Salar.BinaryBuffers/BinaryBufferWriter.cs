@@ -372,7 +372,7 @@ public class BinaryBufferWriter : IBufferWriter
 	/// Copies a span of bytes to the underlying byte array and advances the current position by the number of bytes written.
 	/// </summary>
 	/// <param name="buffer">The span of bytes to write.</param>
-	public void Write(in ReadOnlySpan<byte> buffer)
+	public void Write(ReadOnlySpan<byte> buffer)
 	{
 		var pos = _position;
 		var length = buffer.Length;

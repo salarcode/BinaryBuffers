@@ -190,7 +190,7 @@ public class StreamBufferWriter : IBufferWriter
 	}
 
 	/// <inheritdoc/>
-	public void Write(in ReadOnlySpan<byte> buffer)
+	public void Write(ReadOnlySpan<byte> buffer)
 	{
 #if NET6_0_OR_GREATER
 		_stream.Write(buffer);
