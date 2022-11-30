@@ -17,6 +17,7 @@
 		<PackageReleaseNotes>
 			* Improved the performance of the readers.
 			* Improved the performance of the writer by unmarking methods as virtual.
+			* Improved the performance of the `BinaryBufferWriter` by using Spans.
 			* Added `StreamBufferWriter` as a drop in replacement for `BinaryWriter` to gain 5~10% improvement in performance.
 			* Added `BufferReaderBase` as the base of readers.
 			* Added `StreamBufferReader` as a drop in replacement for `BinaryReader` and to widen the support of input types.

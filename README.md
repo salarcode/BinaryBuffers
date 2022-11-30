@@ -28,14 +28,15 @@ var time = reader.ReadDouble();
 ```
 
 ## Additional Goodies
-Use `StreamBufferWriter` as a drop in replacement for `BinaryWriter` to get 5% ~ 10% improvement in performance.
+Use `StreamBufferWriter` as a drop in replacement for `BinaryWriter` to gain ~10% improvement in performance.
+
 Use `StreamBufferReader` as a drop in replacement for `BinaryReader`. Note that there is no performance benefit in using `StreamBufferReader`, it just helps widen the use of `IBufferReader`.
 
-Use `ResetBuffer` method in `BinaryBufferReader` instead of creating a new one and have less allocations!
+Use `ResetBuffer` method in `BinaryBufferReader` and `BinaryBufferWriter` instead of creating a new one and have less allocations!
 
 # Benchmarks
 
-Benchmarks shows up to 59% improvement in writing and 32% in reading.
+Benchmarks shows up to **75%** improvement in writing and **32%** in reading.
 
 | BinaryBufferReader |     |     |     |     |
 | --- | --- | --- | --- | --- |
@@ -50,12 +51,12 @@ Benchmarks shows up to 59% improvement in writing and 32% in reading.
 | BinaryBufferWriter |     |     |     |     |
 | --- | --- | --- | --- | --- |
 | **Method** | **Mean** | **Error** | **StdDev** | **Ratio** |
-| `BinaryWriter_WriteInt` | 67.97 ms | 0.361 ms | 0.337 ms | baseline |
-| `BufferWriter_WriteInt` | 34.68 ms | 0.225 ms | 0.210 ms |     -49% |
-| `BinaryWriter_WriteDecimal` | 42.65 ms | 0.290 ms | 0.271 ms | baseline |
-| `BufferWriter_WriteDecimal` | 17.30 ms | 0.028 ms | 0.022 ms |     -59% |
-| `BinaryWriter_WriteFloat` | 34.63 ms | 0.114 ms | 0.101 ms | baseline |
-| `BufferWriter_WriteFloat` | 18.53 ms | 0.093 ms | 0.087 ms |     -46% |
+| `BinaryWriter_WriteInt` | 66.98 ms | 0.143 ms | 0.119 ms | baseline |
+| `BufferWriter_WriteInt` | 16.98 ms | 0.339 ms | 0.333 ms |     -75% |
+| `BinaryWriter_WriteDecimal` | 42.29 ms | 0.108 ms | 0.096 ms | baseline |
+| `BufferWriter_WriteDecimal` | 18.49 ms | 0.050 ms | 0.047 ms |     -56% |
+| `BinaryWriter_WriteFloat` | 34.86 ms | 0.494 ms | 0.462 ms | baseline |
+| `BufferWriter_WriteFloat` | 11.33 ms | 0.076 ms | 0.071 ms |     -67% |
 
 Performance tests were generated using **.NET 6.0.11** on:
 ```
