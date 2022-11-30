@@ -9,36 +9,42 @@
 		<Description>A high-performance implementation of BinaryReader and BinaryWriter which works on binary arrays directly by eliminating the need for an intermediate stream object.</Description>
 		<LangVersion>latest</LangVersion>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<AssemblyVersion>3.0.1</AssemblyVersion>
-		<Version>3.0.1</Version>
+		<AssemblyVersion>3.1.0</AssemblyVersion>
+		<Version>3.1.0</Version>
 		<PackageIcon>logo.png</PackageIcon>
 		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<PackageReleaseNotes>* Improved the performance of the readers
-* Added BufferReaderBase as the base of readers
-* Added `StreamBufferReader` as a drop in replacement for `BinaryReader` and to widen the support of input types.
-* Added `ResetBuffer` to `BinaryBufferReader` which is to reset the underlying buffer and helps reuse `BinaryBufferReader` instead of creating a new one.</PackageReleaseNotes>
+		<PackageReleaseNotes>
+			* Improved the performance of the readers.
+			* Improved the performance of the writer by unmarking methods as virtual.
+			* Added `StreamBufferWriter` as a drop in replacement for `BinaryWriter` to gain 5~10% improvement in performance.
+			* Added `BufferReaderBase` as the base of readers.
+			* Added `StreamBufferReader` as a drop in replacement for `BinaryReader` and to widen the support of input types.
+			* Added `ResetBuffer` to `BinaryBufferReader` which is to reset the underlying buffer and helps reuse `BinaryBufferReader` instead of creating a new one.
+			* Also added `ResetBuffer` to `BinaryBufferWriter`.
+			* Assemblies have strong name now.
+		</PackageReleaseNotes>
+		<SignAssembly>True</SignAssembly>
+		<AssemblyOriginatorKeyFile>Salar.BinaryBuffers.snk</AssemblyOriginatorKeyFile>
 	</PropertyGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
 		<PackageReference Include="System.Memory" Version="4.5.5" />
 	</ItemGroup>
-
+	
 	<ItemGroup>
-		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-			<_Parameter1>Salar.BinaryBuffers.Tests</_Parameter1>
-		</AssemblyAttribute>
+		<InternalsVisibleTo Include="Salar.BinaryBuffers.Tests, PublicKey=0024000004800000940000000602000000240000525341310004000001000100a169d88637d816d965b484be2110b888b3d324032002221adf06ea01a4a258500e63f5b85ded775ea6efef7da16dd2c855e3842580c7c72607843a39eab9eb8fb1726f29ca35f5edb0558b5f24d8bc574ba5536f0ea55911a748b0cc16683fcf60d7853b1c59bed406bc20d9d90e9fe0a3ad6b34370fe392ba541df2397783da" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Include="..\img\logo.png">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
-	  <None Include="..\README.md">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
+		<None Include="..\img\logo.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Include="..\README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
 	</ItemGroup>
 
 </Project>

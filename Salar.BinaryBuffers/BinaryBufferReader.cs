@@ -75,7 +75,7 @@ public class BinaryBufferReader : BufferReaderBase
 
 
 	/// <summary>
-	/// Initializes a new instance of the <see cref="BinaryBufferReader"/> class based on the specified byte array.
+	/// Resets the undelying bufer based on the specified byte array.
 	/// </summary>
 	/// <param name="data">The byte array to read from.</param>
 	public void ResetBuffer(byte[] data)
@@ -88,7 +88,7 @@ public class BinaryBufferReader : BufferReaderBase
 	}
 
 	/// <summary>
-	/// Resets the buffer of the <see cref="BinaryBufferReader"/> class based on the specified byte array.
+	/// Resets the undelying bufer based on the specified byte array.
 	/// <para>A provided offset and length specifies the boundaries to use for reading.</para>
 	/// </summary>
 	/// <param name="data">The byte array to read from.</param>

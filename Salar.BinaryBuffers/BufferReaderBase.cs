@@ -11,21 +11,10 @@ namespace Salar.BinaryBuffers;
 public abstract class BufferReaderBase : IBufferReader
 {
 #if NET6_0_OR_GREATER && DISABLED
-	private static Func<int, int, int, int, decimal> _decimalCtor;
-
-	static void InitializeDecimalReader()
-	{
-		var ctor = typeof(decimal).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, new[] { typeof(int), typeof(int), typeof(int), typeof(int) });
-		if (ctor == null)
-			return;
-		var lo = Expression.Parameter(typeof(int), "lo");
-		var mid = Expression.Parameter(typeof(int), "mid");
-		var hi = Expression.Parameter(typeof(int), "hi");
-		var flags = Expression.Parameter(typeof(int), "flags");
-
-		var expressionNew = Expression.New(ctor, lo, mid, hi, flags);
-		_decimalCtor = Expression.Lambda<Func<int, int, int, int, decimal>>(expressionNew, lo, mid, hi, flags).Compile();
-	}
+	delegate decimal DecimalToDecimal(ReadOnlySpan<byte> span);
+	private static readonly DecimalToDecimal _decimalToDecimal = (DecimalToDecimal)typeof(decimal)
+			  .GetMethod("ToDecimal", BindingFlags.Static | BindingFlags.NonPublic, new[] { typeof(ReadOnlySpan<byte>) })
+			  .CreateDelegate(typeof(DecimalToDecimal));
 #endif
 
 	/// <inheritdoc/>
@@ -52,16 +41,16 @@ public abstract class BufferReaderBase : IBufferReader
 	/// <inheritdoc/>
 	public abstract ReadOnlySpan<byte> ReadSpan(int count);
 
-	public decimal ReadDecimal()
+	public unsafe decimal ReadDecimal()
 	{
 		var span = InternalReadSpan(16);
 		try
 		{
 			return new decimal(
 #if NET6_0_OR_GREATER
-				stackalloc
+			stackalloc
 #else
-				new
+			new
 #endif
 			[]
 			{
