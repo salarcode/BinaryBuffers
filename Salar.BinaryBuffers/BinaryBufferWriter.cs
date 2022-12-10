@@ -400,13 +400,27 @@ public class BinaryBufferWriter : BufferWriterBase
 	/// <summary>
 	/// Creates a span over the underlying byte array of the writer.
 	/// </summary>
+	public ReadOnlySpan<byte> RemainingToReadOnlySpan() => new(_buffer, _position, _writtenLength - _position);
+
+	/// <summary>
+	/// Creates a span over the underlying byte array of the writer.
+	/// </summary>
 	public ArraySegment<byte> ToArraySegment() => new(_buffer, _offset, _writtenLength);
+
+	/// <summary>
+	/// Creates a span over the underlying byte array of the writer.
+	/// </summary>
+	public ArraySegment<byte> RemainingToArraySegment() => new(_buffer, _position, _writtenLength - _position);
 
 	/// <summary>
 	/// Returns the underlying byte array of the writer.
 	/// </summary>
 	public byte[] ToArray() => ToReadOnlySpan().ToArray();
 
+	/// <summary>
+	/// Returns the underlying byte array of the writer.
+	/// </summary>
+	public byte[] RemainingToArray() => RemainingToReadOnlySpan().ToArray();
 
 #if !NET6_0_OR_GREATER
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -58,4 +58,9 @@ internal static class ExceptionHelper
 	{
 		return new IOException("Failed to read decimal value", argumentException);
 	}
+
+	internal static ObjectDisposedException DisposedException(string? objectName)
+	{
+		return new ObjectDisposedException(objectName);
+	}
 }
