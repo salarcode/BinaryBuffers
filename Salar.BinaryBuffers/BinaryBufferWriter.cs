@@ -9,7 +9,7 @@ namespace Salar.BinaryBuffers;
 /// <summary>
 /// Provides a writer for writing primitive data types to a byte array.
 /// </summary>
-public class BinaryBufferWriter : IBufferWriter
+public class BinaryBufferWriter : BufferWriterBase
 {
 	private byte[] _buffer;
 	private int _position;
@@ -19,13 +19,13 @@ public class BinaryBufferWriter : IBufferWriter
 	private int _writtenLength;
 
 	/// <inheritdoc/>
-	public int Offset => _offset;
+	public override int Offset => _offset;
 
 	/// <inheritdoc/>
-	public int Length => _length;
+	public override int Length => _length;
 
 	/// <inheritdoc/>
-	public int Position
+	public override int Position
 	{
 		get => _relativePositon;
 		set
@@ -106,11 +106,12 @@ public class BinaryBufferWriter : IBufferWriter
 		_writtenLength = 0;
 	}
 
+
 	/// <summary>
 	/// Writes a boolean value to the underlying byte array and advances the current position by one byte.
 	/// </summary>
 	/// <param name="value">The boolean value to write.</param>
-	public void Write(bool value)
+	public override void Write(bool value)
 	{
 		var pos = _position;
 		Advance(1);
@@ -122,7 +123,7 @@ public class BinaryBufferWriter : IBufferWriter
 	/// Writes a byte to the underlying byte array and advances the current position by one byte.
 	/// </summary>
 	/// <param name="value">The byte value to write.</param>
-	public void Write(byte value)
+	public override void Write(byte value)
 	{
 		var pos = _position;
 		Advance(1);
@@ -134,7 +135,7 @@ public class BinaryBufferWriter : IBufferWriter
 	/// Writes a signed byte to the underlying byte array and advances the current position by one byte.
 	/// </summary>
 	/// <param name="value">The signed byte value to write.</param>
-	public void Write(sbyte value)
+	public override void Write(sbyte value)
 	{
 		var pos = _position;
 		Advance(1);
@@ -146,7 +147,7 @@ public class BinaryBufferWriter : IBufferWriter
 	/// Copies the contents of a byte array to the underlying byte array of the writer and advances the current position by the number of bytes written.
 	/// </summary>
 	/// <param name="buffer">The buffer to copy data from.</param>
-	public void Write(byte[] buffer)
+	public override void Write(byte[] buffer)
 	{
 		if (buffer == null) throw new ArgumentNullException(nameof(buffer));
 
@@ -163,7 +164,7 @@ public class BinaryBufferWriter : IBufferWriter
 	/// <param name="buffer">The buffer to copy data from.</param>
 	/// <param name="offset">The 0-based offset in buffer at which to start copying from.</param>
 	/// <param name="length">The number of bytes to copy.</param>
-	public void Write(byte[] buffer, int offset, int length)
+	public override void Write(byte[] buffer, int offset, int length)
 	{
 		if (buffer == null) throw new ArgumentNullException(nameof(buffer));
 
@@ -177,7 +178,7 @@ public class BinaryBufferWriter : IBufferWriter
 	/// Writes a decimal value to the underlying byte array and advances the current position by sixteen bytes.
 	/// </summary>
 	/// <param name="value">The decimal value to write.</param>
-	public void Write(decimal value)
+	public override void Write(decimal value)
 	{
 		var pos = _position;
 		Advance(16);
@@ -199,7 +200,7 @@ public class BinaryBufferWriter : IBufferWriter
 	/// Writes a double-precision floating-point number to the underlying byte array and advances the current position by eight bytes.
 	/// </summary>
 	/// <param name="value">The double-precision floating-point number to write.</param>
-	public unsafe void Write(double value)
+	public override unsafe void Write(double value)
 	{
 		var pos = _position;
 		Advance(8);
@@ -225,7 +226,7 @@ public class BinaryBufferWriter : IBufferWriter
 	/// Writes a single-precision floating-point number to the underlying byte array and advances the current position by one byte.
 	/// </summary>
 	/// <param name="value">The single-precision floating-point number to write.</param>
-	public unsafe void Write(float value)
+	public override unsafe void Write(float value)
 	{
 		var pos = _position;
 		Advance(4);
@@ -246,7 +247,7 @@ public class BinaryBufferWriter : IBufferWriter
 	/// Writes a 16-bit signed integer to the underlying byte array and advances the current position by two bytes.
 	/// </summary>
 	/// <param name="value">The 16-bit signed integer to write.</param>
-	public void Write(short value)
+	public override void Write(short value)
 	{
 		var pos = _position;
 		Advance(2);
@@ -264,7 +265,7 @@ public class BinaryBufferWriter : IBufferWriter
 	/// Writes a 16-bit unsigned integer to the underlying byte array and advances the current position by two bytes.
 	/// </summary>
 	/// <param name="value">The 16-bit unsigned integer to write.</param>
-	public void Write(ushort value)
+	public override void Write(ushort value)
 	{
 		var pos = _position;
 		Advance(2);
@@ -282,7 +283,7 @@ public class BinaryBufferWriter : IBufferWriter
 	/// Writes a 32-bit signed integer to the underlying byte array and advances the current position by four bytes.
 	/// </summary>
 	/// <param name="value">The 32-bit signed integer to write.</param>
-	public void Write(int value)
+	public override void Write(int value)
 	{
 		var pos = _position;
 		Advance(4);
@@ -302,7 +303,7 @@ public class BinaryBufferWriter : IBufferWriter
 	/// Writes a 32-bit unsigned integer to the underlying byte array and advances the current position by four bytes.
 	/// </summary>
 	/// <param name="value">The 32-bit unsigned integer to write.</param>
-	public void Write(uint value)
+	public override void Write(uint value)
 	{
 		var pos = _position;
 		Advance(4);
@@ -322,7 +323,7 @@ public class BinaryBufferWriter : IBufferWriter
 	/// Writes a 64-bit signed integer to the underlying byte array and advances the current position by eight bytes.
 	/// </summary>
 	/// <param name="value">The 64-bit signed integer to write.</param>
-	public void Write(long value)
+	public override void Write(long value)
 	{
 		var pos = _position;
 		Advance(8);
@@ -347,7 +348,7 @@ public class BinaryBufferWriter : IBufferWriter
 	/// Writes a 64-bit unsigned integer value to the underlying byte array and advances the current position by eight bytes.
 	/// </summary>
 	/// <param name="value">The 64-bit unsigned integer to write.</param>
-	public void Write(ulong value)
+	public override void Write(ulong value)
 	{
 		var pos = _position;
 		Advance(8);
@@ -372,7 +373,7 @@ public class BinaryBufferWriter : IBufferWriter
 	/// Copies a span of bytes to the underlying byte array and advances the current position by the number of bytes written.
 	/// </summary>
 	/// <param name="buffer">The span of bytes to write.</param>
-	public void Write(ReadOnlySpan<byte> buffer)
+	public override void Write(ReadOnlySpan<byte> buffer)
 	{
 		var pos = _position;
 		var length = buffer.Length;
@@ -395,6 +396,7 @@ public class BinaryBufferWriter : IBufferWriter
 	/// Returns the underlying byte array of the writer.
 	/// </summary>
 	public byte[] ToArray() => ToReadOnlySpan().ToArray();
+
 
 #if !NET6_0_OR_GREATER
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
