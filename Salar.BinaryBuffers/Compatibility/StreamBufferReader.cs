@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace Salar.BinaryBuffers.Compatibility;
 
@@ -84,6 +85,9 @@ public class StreamBufferReader : BufferReaderBase, IDisposable
 		return (ReadOnlySpan<byte>)_buffer;
 	}
 
+#if NET6_0_OR_GREATER
+	[SkipLocalsInit]
+#endif
 	private byte[] InternalReadNewBytes(int count)
 	{
 		var buffer = new byte[count];
