@@ -27,6 +27,13 @@ public class StreamBufferWriter : BufferWriterBase
 		_stream = stream;
 	}
 
+	/// <summary>
+	/// Reset the status of what is written; sepends on the underlying stream might clean itself.
+	/// </summary>
+	public override void ResetBuffer()
+	{
+		_stream.SetLength(0);
+	}
 
 	/// <inheritdoc/>
 	public override void Write(bool value)

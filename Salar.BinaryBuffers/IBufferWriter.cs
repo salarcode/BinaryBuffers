@@ -23,6 +23,11 @@ public interface IBufferWriter
 	int Position { get; set; }
 
 	/// <summary>
+	/// Reset the status of what is written; sepends on the underlying stream might clean itself.
+	/// </summary>
+	void ResetBuffer();
+
+	/// <summary>
 	/// Writes a boolean value to the underlying byte array and advances the current position by one byte.
 	/// </summary>
 	/// <param name="value">The boolean value to write.</param>

@@ -106,6 +106,16 @@ public class BinaryBufferWriter : BufferWriterBase
 		_writtenLength = 0;
 	}
 
+	/// <summary>
+	/// Reset the status of what is written; doesn't clean the underlying buffer.
+	/// </summary>
+	public override void ResetBuffer()
+	{
+		_position = 0;
+		_relativePositon = 0;
+		_offset = 0;
+		_writtenLength = 0;
+	}
 
 	/// <summary>
 	/// Writes a boolean value to the underlying byte array and advances the current position by one byte.
