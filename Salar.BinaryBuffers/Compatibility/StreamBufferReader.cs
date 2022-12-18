@@ -30,6 +30,9 @@ public class StreamBufferReader : BufferReaderBase, IDisposable
 	/// <inheritdoc/>
 	public override int Position { get => (int)_stream.Position; set => _stream.Position = value; }
 
+	/// <inheritdoc/>
+	public override int Remaining => (int)(_stream.Length - _stream.Position);
+
 	public StreamBufferReader(Stream stream)
 	{
 		_buffer = new byte[16];

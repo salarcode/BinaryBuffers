@@ -29,6 +29,9 @@ public abstract class BufferReaderBase : IBufferReader
 	public abstract int Position { get; set; }
 
 	/// <inheritdoc/>
+	public abstract int Remaining { get; }
+
+	/// <inheritdoc/>
 	public bool ReadBoolean() => InternalReadByte() != 0;
 
 	/// <inheritdoc/>

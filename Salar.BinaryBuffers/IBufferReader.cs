@@ -23,6 +23,11 @@ public interface IBufferReader
 	int Position { get; }
 
 	/// <summary>
+	/// Gets the amount of bytes remaining until end of the buffer.
+	/// </summary>
+	int Remaining { get; }
+
+	/// <summary>
 	/// Reads a boolean value from the current binary stream and advances the current position within the stream by one byte.
 	/// </summary>
 	bool ReadBoolean();

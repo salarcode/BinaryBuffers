@@ -22,6 +22,8 @@ public class StreamBufferWriter : BufferWriterBase
 	/// <inheritdoc/>
 	public override int Position { get => (int)_stream.Position; set => _stream.Position = value; }
 
+	public Stream Stream => _stream;
+
 	public StreamBufferWriter(Stream stream)
 	{
 		_stream = stream;
@@ -63,6 +65,11 @@ public class StreamBufferWriter : BufferWriterBase
 	public override void Write(byte[] buffer, int offset, int length)
 	{
 		_stream.Write(buffer, offset, length);
+	}
+
+	public void Write(in ArraySegment<byte> buffer)
+	{
+		_stream.Write(buffer.Array!, buffer.Offset, buffer.Count);
 	}
 
 	/// <inheritdoc/>

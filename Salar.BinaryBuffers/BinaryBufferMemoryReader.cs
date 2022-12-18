@@ -39,6 +39,9 @@ public class BinaryBufferMemoryReader : BufferReaderBase
 		}
 	}
 
+	/// <inheritdoc/>
+	public override int Remaining => _length - _position;
+
 	/// <summary>
 	/// Initializes a new instance of <see cref="BinaryBufferReader"/> based on the specified <see cref="ReadOnlyMemory{T}"/>.
 	/// </summary>

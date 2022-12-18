@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Buffers;
+using System.Runtime.CompilerServices;
 
 namespace Salar.BinaryBuffers;
 
@@ -32,6 +33,8 @@ public class SequenceBufferReader : BufferReaderBase, IDisposable
 			_position = newPosition;
 		}
 	}
+
+	public override int Remaining => _length - _relativePositon;
 
 	public SequenceBufferReader(ReadOnlySequence<byte> buffer)
 	{

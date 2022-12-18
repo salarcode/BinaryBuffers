@@ -41,6 +41,9 @@ public class BinaryBufferReader : BufferReaderBase
 		}
 	}
 
+	/// <inheritdoc/>
+	public override int Remaining => _length - _relativePositon;
+
 	/// <summary>
 	/// Initializes a new instance of the <see cref="BinaryBufferReader"/> class based on the specified byte array.
 	/// </summary>
