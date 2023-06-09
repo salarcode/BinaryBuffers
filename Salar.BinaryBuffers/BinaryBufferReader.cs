@@ -198,4 +198,25 @@ public class BinaryBufferReader : BufferReaderBase
 
 		return new ReadOnlySpan<byte>(_data, curPos, count);
 	}
+
+	public override ReadOnlyMemory<byte> ReadMemory(int count)
+	{
+		if (count <= 0)
+			return ReadOnlyMemory<byte>.Empty;
+
+		int curPos = _position;
+		int newPos = curPos + count;
+		int relPos = _relativePositon + count;
+
+		if ((uint)relPos > (uint)_length)
+		{
+			_relativePositon = _length;
+			throw ExceptionHelper.EndOfDataException();
+		}
+
+		_relativePositon = relPos;
+		_position = newPos;
+
+		return new ReadOnlyMemory<byte>(_data, curPos, count);
+	}
 }

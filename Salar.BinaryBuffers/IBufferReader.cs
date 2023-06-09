@@ -58,6 +58,12 @@ public interface IBufferReader
 	ReadOnlySpan<byte> ReadSpan(int count);
 
 	/// <summary>
+	/// Reads the specified number of bytes as memory from the current binary stream and advances the current position within the stream by the number of bytes read.
+	/// </summary>
+	/// <param name="count">The number of bytes to read.</param>
+	ReadOnlyMemory<byte> ReadMemory(int count);
+
+	/// <summary>
 	/// Reads a decimal value from the current binary stream and advances the current position within the stream by sixteen bytes.
 	/// </summary>
 	decimal ReadDecimal();

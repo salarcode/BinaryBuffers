@@ -61,6 +61,12 @@ public class StreamBufferReader : BufferReaderBase, IDisposable
 		return InternalReadNewBytes(count);
 	}
 
+	/// <inheritdoc/>
+	public override ReadOnlyMemory<byte> ReadMemory(int count)
+	{
+		return InternalReadNewBytes(count);
+	}
+
 	protected override byte InternalReadByte()
 	{
 		if (_stream.Read(_buffer, 0, 1) == 0)

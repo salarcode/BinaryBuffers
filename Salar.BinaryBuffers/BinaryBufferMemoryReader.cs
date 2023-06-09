@@ -58,7 +58,14 @@ public class BinaryBufferMemoryReader : BufferReaderBase
 	/// <inheritdoc/>
 	public override byte[] ReadBytes(int count) => InternalReadSpan(count).ToArray();
 
+	/// <inheritdoc/>
 	public override ReadOnlySpan<byte> ReadSpan(int count) => InternalReadSpan(count);
+
+	/// <inheritdoc/>
+	public override ReadOnlyMemory<byte> ReadMemory(int count)
+	{
+		return InternalReadMemory(count);
+	}
 
 	/// <inheritdoc/>
 	public override int Read(byte[] buffer, int index, int count)
@@ -107,8 +114,17 @@ public class BinaryBufferMemoryReader : BufferReaderBase
 	/// <param name="count">The size of the read-only span to return.</param>
 	protected override ReadOnlySpan<byte> InternalReadSpan(int count)
 	{
+		return InternalReadMemory(count).Span;
+	}
+
+	/// <summary>
+	/// Returns a read-only span over the specified number of bytes from the underlying <see cref="ReadOnlyMemory{T}"/> and advances the current position by that number of bytes.
+	/// </summary>
+	/// <param name="count">The size of the read-only span to return.</param>
+	private ReadOnlyMemory<byte> InternalReadMemory(int count)
+	{
 		if (count <= 0)
-			return ReadOnlySpan<byte>.Empty;
+			return ReadOnlyMemory<byte>.Empty;
 
 		int curPos = _position;
 		int newPos = curPos + count;
@@ -121,6 +137,6 @@ public class BinaryBufferMemoryReader : BufferReaderBase
 
 		_position = newPos;
 
-		return _data.Slice(curPos, count).Span;
+		return _data.Slice(curPos, count);
 	}
 }

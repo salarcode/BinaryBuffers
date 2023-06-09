@@ -46,6 +46,9 @@ public abstract class BufferReaderBase : IBufferReader
 	/// <inheritdoc/>
 	public abstract ReadOnlySpan<byte> ReadSpan(int count);
 
+	/// <inheritdoc/>
+	public abstract ReadOnlyMemory<byte> ReadMemory(int count);
+
 	public unsafe decimal ReadDecimal()
 	{
 		var span = InternalReadSpan(16);
