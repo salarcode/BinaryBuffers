@@ -436,6 +436,15 @@ public class BinaryBufferWriter : BufferWriterBase
 	}
 #endif
 	
+	/// <summary>
+	/// Moves the current position of the writer ahead by the specified number of bytes.
+	/// </summary>
+	/// <param name="count">The number of bytes to advance</param>
+	public void SimulateWrite(int count)
+	{
+		Advance(count);
+	}
+
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private void Advance(int count)
 	{
