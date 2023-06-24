@@ -398,9 +398,10 @@ public class BinaryBufferWriter : BufferWriterBase
 	public ReadOnlySpan<byte> ToReadOnlySpan() => new(_buffer, _offset, _writtenLength);
 
 	/// <summary>
-	/// Creates a span over the underlying byte array of the writer.
+	/// Returns a span over the remaining written bytes of the underlying byte array of the writer.
+	/// Can be useful when used together with position property.
 	/// </summary>
-	public ReadOnlySpan<byte> RemainingToReadOnlySpan() => new(_buffer, _position, _writtenLength - _position);
+	public ReadOnlySpan<byte> RemainingToReadOnlySpan() => new(_buffer, _position, _writtenLength);
 
 	/// <summary>
 	/// Creates a span over the underlying byte array of the writer.
@@ -408,9 +409,10 @@ public class BinaryBufferWriter : BufferWriterBase
 	public ArraySegment<byte> ToArraySegment() => new(_buffer, _offset, _writtenLength);
 
 	/// <summary>
-	/// Creates a span over the underlying byte array of the writer.
+	/// Returns a ArraySegment over the remaining written bytes of the underlying byte array of the writer.
+	/// Can be useful when used together with position property.
 	/// </summary>
-	public ArraySegment<byte> RemainingToArraySegment() => new(_buffer, _position, _writtenLength - _position);
+	public ArraySegment<byte> RemainingToArraySegment() => new(_buffer, _position, _writtenLength);
 
 	/// <summary>
 	/// Returns the underlying byte array of the writer.
@@ -418,7 +420,8 @@ public class BinaryBufferWriter : BufferWriterBase
 	public byte[] ToArray() => ToReadOnlySpan().ToArray();
 
 	/// <summary>
-	/// Returns the underlying byte array of the writer.
+	/// Returns the remaining written bytes of the underlying byte array of the writer.
+	/// Can be useful when used together with position property.
 	/// </summary>
 	public byte[] RemainingToArray() => RemainingToReadOnlySpan().ToArray();
 
@@ -432,7 +435,7 @@ public class BinaryBufferWriter : BufferWriterBase
 		_buffer[pos + 3] = (byte)(value >> 24);
 	}
 #endif
-
+	
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private void Advance(int count)
 	{
