@@ -401,7 +401,7 @@ public class BinaryBufferWriter : BufferWriterBase
 	/// Returns a span over the remaining written bytes of the underlying byte array of the writer.
 	/// Can be useful when used together with position property.
 	/// </summary>
-	public ReadOnlySpan<byte> RemainingToReadOnlySpan() => new(_buffer, _position, _writtenLength);
+	public ReadOnlySpan<byte> RemainingToReadOnlySpan() => new(_buffer, _position, _writtenLength - _relativePositon);
 
 	/// <summary>
 	/// Creates a span over the underlying byte array of the writer.
@@ -412,7 +412,7 @@ public class BinaryBufferWriter : BufferWriterBase
 	/// Returns a ArraySegment over the remaining written bytes of the underlying byte array of the writer.
 	/// Can be useful when used together with position property.
 	/// </summary>
-	public ArraySegment<byte> RemainingToArraySegment() => new(_buffer, _position, _writtenLength);
+	public ArraySegment<byte> RemainingToArraySegment() => new(_buffer, _position, _writtenLength - _relativePositon);
 
 	/// <summary>
 	/// Returns the underlying byte array of the writer.
