@@ -496,6 +496,7 @@ public class BinaryBufferWriterTests
 			Assert.Equal(expectedException.Message, actualException.Message);
 		}
 
+		/// <returns>Written length</returns>
 		private int WriteData_AdvanceToPosition_WriteData(int startingPosition, int dataLength1, int advanceToPosition, int dataLength2)
 		{
 			var data1 = Enumerable.Repeat((byte)0xFF, dataLength1).ToArray();
@@ -509,6 +510,7 @@ public class BinaryBufferWriterTests
 			return Math.Max(Convert.ToByte(dataLength1 > 0) * startingPosition + dataLength1, Convert.ToByte(dataLength2 > 0) * advanceToPosition + dataLength2);
 		}
 
+		/// <returns>Written length</returns>
 		private int WriteData_AdvanceToPosition_WriteData()
 		{
 			const int dataLength1 = 10;

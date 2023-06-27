@@ -435,11 +435,12 @@ public class BinaryBufferWriter : BufferWriterBase
 		_buffer[pos + 3] = (byte)(value >> 24);
 	}
 #endif
-	
+
 	/// <summary>
 	/// Moves the current position of the writer ahead by the specified number of bytes.
 	/// </summary>
 	/// <param name="count">The number of bytes to advance</param>
+	/// <exception cref="EndOfStreamException"/>
 	public void SimulateWrite(int count)
 	{
 		Advance(count);
