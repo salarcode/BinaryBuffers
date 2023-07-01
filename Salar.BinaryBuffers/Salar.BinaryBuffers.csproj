@@ -14,6 +14,7 @@
 		<PackageIcon>logo.png</PackageIcon>
 		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<PackageReleaseNotes>
 			* Improved the performance of the readers.
 			* Improved the performance of the writer by unmarking methods as virtual.
