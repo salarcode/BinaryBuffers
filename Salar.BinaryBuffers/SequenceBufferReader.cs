@@ -4,16 +4,14 @@ using System.Runtime.CompilerServices;
 
 namespace Salar.BinaryBuffers;
 
-public class SequenceBufferReader : BufferReaderBase, IDisposable
+public sealed class SequenceBufferReader : BufferReaderBase, IDisposable
 {
 	private int _length;
-	private int _offset;
-	private int _relativePositon;
 	private int _position;
-	private ReadOnlySequence<byte>? _buffer;
+	private ReadOnlySequence<byte> _buffer = ReadOnlySequence<byte>.Empty;
 
 	/// <inheritdoc/>
-	public override int Offset => _offset;
+	public override int Offset => 0;
 
 	/// <inheritdoc/>
 	public override int Length => _length;
@@ -21,27 +19,27 @@ public class SequenceBufferReader : BufferReaderBase, IDisposable
 	/// <inheritdoc/>
 	public override int Position
 	{
-		get => _relativePositon;
+		get => _position;
 		set
 		{
-			var newPosition = _offset + value;
-
 			if (value < 0) throw ExceptionHelper.PositionLessThanZeroException(nameof(value));
 			if (value > _length) throw ExceptionHelper.PositionGreaterThanLengthOfByteArrayException(nameof(value));
 
-			_relativePositon = value;
-			_position = newPosition;
+			_position = value;
 		}
 	}
 
-	public override int Remaining => _length - _relativePositon;
+	/// <inheritdoc/>
+	public override int Remaining => _length - _position;
 
-	public SequenceBufferReader(ReadOnlySequence<byte> buffer)
+	/// <summary>
+	/// Initializes a new instance of the <see cref="SequenceBufferReader"/> class based on the specified <see cref="ReadOnlySequence{T}"/>.
+	/// </summary>
+	/// <param name="buffer"></param>
+	public SequenceBufferReader(in ReadOnlySequence<byte> buffer)
 	{
 		_buffer = buffer;
 		_position = 0;
-		_relativePositon = 0;
-		_offset = 0;
 		_length = (int)buffer.Length;
 	}
 
@@ -50,37 +48,35 @@ public class SequenceBufferReader : BufferReaderBase, IDisposable
 	{
 		if (count <= 0)
 			return 0;
-		if (_buffer == null)
-			throw ExceptionHelper.DisposedException(nameof(SequenceBufferReader));
-
-		int relPos = _relativePositon + count;
-
-		if ((uint)relPos > (uint)_length)
-		{
-			count = relPos - _length;
-		}
-		if (count <= 0)
-			return 0;
-
-		if (_buffer == null)
-			throw ExceptionHelper.DisposedException(nameof(SequenceBufferReader));
 
 		int curPos = _position;
 		int newPos = curPos + count;
-		relPos = _relativePositon + count;
 
-		if ((uint)relPos > (uint)_length)
+		if ((uint)newPos > (uint)_length)
 		{
-			_relativePositon = _length;
+			_position = _length;
 			throw ExceptionHelper.EndOfDataException();
 		}
 
-		_relativePositon = relPos;
 		_position = newPos;
 
-		var result = _buffer.Value.Slice(curPos, count);
-		result.CopyTo(buffer.AsSpan(index, count));
-
+		if (_buffer.IsSingleSegment)
+		{
+#if NET6_0_OR_GREATER
+			_buffer.FirstSpan
+				.Slice(curPos, count)
+				.CopyTo(buffer.AsSpan(index, count));
+#else
+			_buffer.First
+				.Slice(curPos, count)
+				.CopyTo(buffer.AsMemory(index, count));
+#endif
+		}
+		else
+		{
+			var result = _buffer.Slice(curPos, count);
+			result.CopyTo(buffer.AsSpan(index, count));
+		}
 		return count;
 	}
 
@@ -89,9 +85,6 @@ public class SequenceBufferReader : BufferReaderBase, IDisposable
 
 	protected override byte InternalReadByte()
 	{
-		if (_buffer == null)
-			throw ExceptionHelper.DisposedException(nameof(SequenceBufferReader));
-
 		var sequence = InternalReadSequence(1);
 
 #if NET6_0_OR_GREATER
@@ -107,8 +100,6 @@ public class SequenceBufferReader : BufferReaderBase, IDisposable
 	{
 		if (count <= 0)
 			return Array.Empty<byte>();
-		if (_buffer == null)
-			throw ExceptionHelper.DisposedException(nameof(SequenceBufferReader));
 
 		var sequence = InternalReadSequence(count);
 
@@ -134,13 +125,33 @@ public class SequenceBufferReader : BufferReaderBase, IDisposable
 		if (count <= 0)
 			return ReadOnlySpan<byte>.Empty;
 
-		var sequence = InternalReadSequence(count);
+		int curPos = _position;
+		int newPos = curPos + count;
+
+		if ((uint)newPos > (uint)_length)
+		{
+			_position = _length;
+			throw ExceptionHelper.EndOfDataException();
+		}
+
+		_position = newPos;
+
+		if (_buffer.IsSingleSegment)
+		{
+#if NET6_0_OR_GREATER
+			return _buffer.FirstSpan.Slice(curPos, count);
+#else
+			return _buffer.First.Span.Slice(curPos, count);
+#endif
+		}
+
+		var sequence = _buffer.Slice(curPos, count);
 		if (sequence.IsSingleSegment)
 		{
 #if NET6_0_OR_GREATER
 			return sequence.FirstSpan;
 #else
-            return sequence.First.Span;
+			return sequence.First.Span;
 #endif
 		}
 		return sequence.ToArray();
@@ -149,27 +160,22 @@ public class SequenceBufferReader : BufferReaderBase, IDisposable
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private ReadOnlySequence<byte> InternalReadSequence(int count)
 	{
-		if (_buffer == null)
-			throw ExceptionHelper.DisposedException(nameof(SequenceBufferReader));
-
 		int curPos = _position;
 		int newPos = curPos + count;
-		int relPos = _relativePositon + count;
 
-		if ((uint)relPos > (uint)_length)
+		if ((uint)newPos > (uint)_length)
 		{
-			_relativePositon = _length;
+			_position = _length;
 			throw ExceptionHelper.EndOfDataException();
 		}
 
-		_relativePositon = relPos;
-		_position = newPos;
+ 		_position = newPos;
 
-		return _buffer.Value.Slice(curPos, count);
+		return _buffer.Slice(curPos, count);
 	}
 
 	public void Dispose()
 	{
-		_buffer = null;
+		_buffer = ReadOnlySequence<byte>.Empty;
 	}
 }

@@ -5,7 +5,7 @@ namespace Salar.BinaryBuffers;
 /// <summary>
 /// Implements an <see cref="BufferReaderBase"/> that can read primitive data types from a byte array.
 /// </summary>
-public class BinaryBufferReader : BufferReaderBase
+public sealed class BinaryBufferReader : BufferReaderBase
 {
 	private byte[] _data;
 	private int _length;

@@ -1,5 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using Salar.BinaryBuffers.Compatibility;
+using System;
 using System.Buffers;
 using System.IO;
 
@@ -12,6 +13,7 @@ public abstract class BinaryReaderVsBufferReaderBase
 	protected readonly MemoryStream _memoryStream;
 	protected readonly BinaryReader _binaryReader;
 	protected readonly BinaryBufferReader _bufferReader;
+	protected readonly BinaryBufferMemoryReader _binaryBufferMemoryReader;
 	protected readonly StreamBufferReader _streamBufferReader;
 	protected readonly SequenceBufferReader _sequenceBufferReader;
 
@@ -22,6 +24,7 @@ public abstract class BinaryReaderVsBufferReaderBase
 		_binaryReader = new BinaryReader(_memoryStream);
 		_bufferReader = new BinaryBufferReader(buffer);
 		_streamBufferReader = new StreamBufferReader(_memoryStream);
+		_binaryBufferMemoryReader = new BinaryBufferMemoryReader(new ReadOnlyMemory<byte>(buffer));
 		_sequenceBufferReader = new SequenceBufferReader(new ReadOnlySequence<byte>(buffer));
 	}
 }
@@ -61,6 +64,18 @@ public class BinaryReaderVsBufferReader_Int : BinaryReaderVsBufferReaderBase
 
 			_streamBufferReader.ReadInt32();
 			_streamBufferReader.ReadInt64();
+		}
+	}
+
+	[Benchmark]
+	public void BinaryBufferMemoryReader_ReadInt()
+	{
+		for (int i = 0; i < Loops; i++)
+		{
+			_binaryBufferMemoryReader.Position = 0;
+
+			_binaryBufferMemoryReader.ReadInt32();
+			_binaryBufferMemoryReader.ReadInt64();
 		}
 	}
 
@@ -113,7 +128,18 @@ public class BinaryReaderVsBufferReader_Decimal : BinaryReaderVsBufferReaderBase
 	}
 
 	[Benchmark]
-	public void SequenceBufferReader_ReadInt()
+	public void BinaryBufferMemoryReader_ReadDecimal()
+	{
+		for (int i = 0; i < Loops; i++)
+		{
+			_binaryBufferMemoryReader.Position = 0;
+
+			_binaryBufferMemoryReader.ReadDecimal();
+		}
+	}
+
+	[Benchmark]
+	public void SequenceBufferReader_ReadDecimal()
 	{
 		for (int i = 0; i < Loops; i++)
 		{
@@ -160,7 +186,18 @@ public class BinaryReaderVsBufferReader_Float : BinaryReaderVsBufferReaderBase
 	}
 
 	[Benchmark]
-	public void SequenceBufferReader_ReadInt()
+	public void BinaryBufferMemoryReader_ReadFloat()
+	{
+		for (int i = 0; i < Loops; i++)
+		{
+			_binaryBufferMemoryReader.Position = 0;
+
+			_binaryBufferMemoryReader.ReadSingle();
+		}
+	}
+
+	[Benchmark]
+	public void SequenceBufferReader_ReadFloat()
 	{
 		for (int i = 0; i < Loops; i++)
 		{

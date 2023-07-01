@@ -9,7 +9,7 @@ namespace Salar.BinaryBuffers;
 /// <summary>
 /// Provides a writer for writing primitive data types to a byte array.
 /// </summary>
-public class BinaryBufferWriter : BufferWriterBase
+public sealed class BinaryBufferWriter : BufferWriterBase
 {
 	private byte[] _buffer;
 	private int _position;

@@ -5,17 +5,16 @@ namespace Salar.BinaryBuffers;
 /// <summary>
 /// Implements an <see cref="BufferReaderBase"/> that can read primitive data types from a <see cref="byte"/>-based <see cref="ReadOnlyMemory{T}"/>.
 /// </summary>
-public class BinaryBufferMemoryReader : BufferReaderBase
+public sealed class BinaryBufferMemoryReader : BufferReaderBase
 {
 	private readonly ReadOnlyMemory<byte> _data;
-	private readonly int _offset;
 	private readonly int _length;
 	private int _position;
 
 	/// <summary>
 	/// Gets the offset into the underlying <see cref="ReadOnlyMemory{T}"/> to start reading from.
 	/// </summary>
-	public override int Offset => _offset;
+	public override int Offset => 0;
 
 	/// <summary>
 	/// Gets the effective length of the readable region of the underlying <see cref="ReadOnlyMemory{T}"/>.
@@ -30,12 +29,10 @@ public class BinaryBufferMemoryReader : BufferReaderBase
 		get => _position;
 		set
 		{
-			var newPosition = _position + value;
+			if (value < 0) throw ExceptionHelper.PositionLessThanZeroException(nameof(value));
+			if (value > _length) throw ExceptionHelper.PositionGreaterThanLengthOfReadOnlyMemoryException(nameof(value));
 
-			if (newPosition < 0) throw ExceptionHelper.PositionLessThanZeroException(nameof(value));
-			if (newPosition > _length) throw ExceptionHelper.PositionGreaterThanLengthOfReadOnlyMemoryException(nameof(value));
-
-			_position = newPosition;
+			_position = value;
 		}
 	}
 
@@ -51,7 +48,6 @@ public class BinaryBufferMemoryReader : BufferReaderBase
 	{
 		_data = data;
 		_position = 0;
-		_offset = 0;
 		_length = data.Length;
 	}
 
