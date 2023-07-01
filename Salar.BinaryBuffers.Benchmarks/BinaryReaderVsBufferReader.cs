@@ -1,5 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using Salar.BinaryBuffers.Compatibility;
+using System.Buffers;
 using System.IO;
 
 namespace Salar.BinaryBuffers.Benchmarks;
@@ -12,6 +13,7 @@ public abstract class BinaryReaderVsBufferReaderBase
 	protected readonly BinaryReader _binaryReader;
 	protected readonly BinaryBufferReader _bufferReader;
 	protected readonly StreamBufferReader _streamBufferReader;
+	protected readonly SequenceBufferReader _sequenceBufferReader;
 
 	protected BinaryReaderVsBufferReaderBase()
 	{
@@ -20,6 +22,7 @@ public abstract class BinaryReaderVsBufferReaderBase
 		_binaryReader = new BinaryReader(_memoryStream);
 		_bufferReader = new BinaryBufferReader(buffer);
 		_streamBufferReader = new StreamBufferReader(_memoryStream);
+		_sequenceBufferReader = new SequenceBufferReader(new ReadOnlySequence<byte>(buffer));
 	}
 }
 
@@ -60,6 +63,18 @@ public class BinaryReaderVsBufferReader_Int : BinaryReaderVsBufferReaderBase
 			_streamBufferReader.ReadInt64();
 		}
 	}
+
+	[Benchmark]
+	public void SequenceBufferReader_ReadInt()
+	{
+		for (int i = 0; i < Loops; i++)
+		{
+			_sequenceBufferReader.Position = 0;
+
+			_sequenceBufferReader.ReadInt32();
+			_sequenceBufferReader.ReadInt64();
+		}
+	}
 }
 
 public class BinaryReaderVsBufferReader_Decimal : BinaryReaderVsBufferReaderBase
@@ -96,6 +111,17 @@ public class BinaryReaderVsBufferReader_Decimal : BinaryReaderVsBufferReaderBase
 			_streamBufferReader.ReadDecimal();
 		}
 	}
+
+	[Benchmark]
+	public void SequenceBufferReader_ReadInt()
+	{
+		for (int i = 0; i < Loops; i++)
+		{
+			_sequenceBufferReader.Position = 0;
+
+			_sequenceBufferReader.ReadDecimal();
+		}
+	}
 }
 
 public class BinaryReaderVsBufferReader_Float : BinaryReaderVsBufferReaderBase
@@ -130,6 +156,17 @@ public class BinaryReaderVsBufferReader_Float : BinaryReaderVsBufferReaderBase
 			_memoryStream.Position = 0;
 
 			_streamBufferReader.ReadSingle();
+		}
+	}
+
+	[Benchmark]
+	public void SequenceBufferReader_ReadInt()
+	{
+		for (int i = 0; i < Loops; i++)
+		{
+			_sequenceBufferReader.Position = 0;
+
+			_sequenceBufferReader.ReadSingle();
 		}
 	}
 }

@@ -552,6 +552,21 @@ public class BinaryBufferWriterTests
 
 			Assert.Equal(expectedWrittenLength, Fixture.BufferWriter.WrittenLength);
 		}
+
+		[Fact]
+		public void RemainingToArray_And_RemainingToArraySegment_should_return_the_remaining_data()
+		{
+			var writtenLength = WriteData_AdvanceToPosition_WriteData();
+			
+			// TODO: write proper test for this
+			Fixture.BufferWriter.Position = 15;
+			Fixture.NativeReader.BaseStream.Position = 15;
+
+			var expectedVal = Fixture.NativeReader.ReadBytes(writtenLength - (int)Fixture.BufferWriter.Position);
+
+			Assert.True(Fixture.BufferWriter.RemainingToArraySegment().SequenceEqual(expectedVal));
+			Assert.True(Fixture.BufferWriter.RemainingToArray().SequenceEqual(expectedVal));
+		}
 	}
 
 	public class Writing
