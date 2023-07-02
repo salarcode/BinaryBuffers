@@ -8,7 +8,7 @@ namespace Salar.BinaryBuffers.Benchmarks;
 
 public abstract class BinaryReaderVsBufferReaderBase
 {
-	protected const int Loops = 5_000_000;
+	protected const int Loops = 10_000;
 
 	protected readonly MemoryStream _memoryStream;
 	protected readonly BinaryReader _binaryReader;
