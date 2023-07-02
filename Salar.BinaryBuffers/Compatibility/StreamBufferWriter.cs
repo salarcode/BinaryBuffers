@@ -32,41 +32,48 @@ public class StreamBufferWriter : BufferWriterBase
 	/// <summary>
 	/// Reset the status of what is written; sepends on the underlying stream might clean itself.
 	/// </summary>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public override void ResetBuffer()
 	{
 		_stream.SetLength(0);
 	}
 
 	/// <inheritdoc/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public override void Write(bool value)
 	{
 		_stream.WriteByte(value ? (byte)1 : (byte)0);
 	}
 
 	/// <inheritdoc/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public override void Write(byte value)
 	{
 		_stream.WriteByte(value);
 	}
 
 	/// <inheritdoc/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public override void Write(sbyte value)
 	{
 		_stream.WriteByte((byte)value);
 	}
 
 	/// <inheritdoc/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public override void Write(byte[] buffer)
 	{
 		_stream.Write(buffer, 0, buffer.Length);
 	}
 
 	/// <inheritdoc/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public override void Write(byte[] buffer, int offset, int length)
 	{
 		_stream.Write(buffer, offset, length);
 	}
 
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public void Write(in ArraySegment<byte> buffer)
 	{
 		_stream.Write(buffer.Array!, buffer.Offset, buffer.Count);

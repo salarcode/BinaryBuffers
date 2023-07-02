@@ -32,9 +32,11 @@ public abstract class BufferReaderBase : IBufferReader
 	public abstract int Remaining { get; }
 
 	/// <inheritdoc/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public bool ReadBoolean() => InternalReadByte() != 0;
 
 	/// <inheritdoc/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public byte ReadByte() => InternalReadByte();
 
 	/// <inheritdoc/>
@@ -104,6 +106,7 @@ public abstract class BufferReaderBase : IBufferReader
 	}
 
 	/// <inheritdoc/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public sbyte ReadSByte() => (sbyte)InternalReadByte();
 
 	/// <inheritdoc/>

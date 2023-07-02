@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace Salar.BinaryBuffers;
 
@@ -127,9 +128,11 @@ public sealed class BinaryBufferReader : BufferReaderBase
 	}
 
 	/// <inheritdoc/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public override byte[] ReadBytes(int count) => InternalReadSpan(count).ToArray();
 
 	/// <inheritdoc/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public override ReadOnlySpan<byte> ReadSpan(int count) => InternalReadSpan(count);
 	
 	/// <inheritdoc/>

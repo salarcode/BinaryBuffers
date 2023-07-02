@@ -395,28 +395,33 @@ public sealed class BinaryBufferWriter : BufferWriterBase
 	/// <summary>
 	/// Creates a span over the underlying byte array of the writer.
 	/// </summary>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public ReadOnlySpan<byte> ToReadOnlySpan() => new(_buffer, _offset, _writtenLength);
 
 	/// <summary>
 	/// Returns a span over the remaining written bytes of the underlying byte array of the writer.
 	/// Can be useful when used together with position property.
 	/// </summary>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public ReadOnlySpan<byte> RemainingToReadOnlySpan() => new(_buffer, _position, _writtenLength - _relativePositon);
 
 	/// <summary>
 	/// Creates a span over the underlying byte array of the writer.
 	/// </summary>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public ArraySegment<byte> ToArraySegment() => new(_buffer, _offset, _writtenLength);
 
 	/// <summary>
 	/// Returns a ArraySegment over the remaining written bytes of the underlying byte array of the writer.
 	/// Can be useful when used together with position property.
 	/// </summary>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public ArraySegment<byte> RemainingToArraySegment() => new(_buffer, _position, _writtenLength - _relativePositon);
 
 	/// <summary>
 	/// Returns the underlying byte array of the writer.
 	/// </summary>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public byte[] ToArray() => ToReadOnlySpan().ToArray();
 
 	/// <summary>
@@ -441,6 +446,7 @@ public sealed class BinaryBufferWriter : BufferWriterBase
 	/// </summary>
 	/// <param name="count">The number of bytes to advance</param>
 	/// <exception cref="EndOfStreamException"/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public void SimulateWrite(int count)
 	{
 		Advance(count);

@@ -33,6 +33,9 @@ public class StreamBufferReader : BufferReaderBase, IDisposable
 	/// <inheritdoc/>
 	public override int Remaining => (int)(_stream.Length - _stream.Position);
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="StreamBufferReader"/> class based on the specified stream.
+	/// </summary>
 	public StreamBufferReader(Stream stream)
 	{
 		_buffer = new byte[16];
@@ -44,29 +47,34 @@ public class StreamBufferReader : BufferReaderBase, IDisposable
 	}
 
 	/// <inheritdoc/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public override int Read(byte[] buffer, int index, int count)
 	{
 		return _stream.Read(buffer, index, count);
 	}
 
 	/// <inheritdoc/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public override byte[] ReadBytes(int count)
 	{
 		return InternalReadNewBytes(count);
 	}
 
 	/// <inheritdoc/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public override ReadOnlySpan<byte> ReadSpan(int count)
 	{
-		return InternalReadNewBytes(count);
+		return InternalReadSpan(count);
 	}
 
 	/// <inheritdoc/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public override ReadOnlyMemory<byte> ReadMemory(int count)
 	{
 		return InternalReadNewBytes(count);
 	}
 
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected override byte InternalReadByte()
 	{
 		if (_stream.Read(_buffer, 0, 1) == 0)
