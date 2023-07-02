@@ -107,6 +107,11 @@ public class StreamBufferReader : BufferReaderBase, IDisposable
 #endif
 	private byte[] InternalReadNewBytes(int count)
 	{
+		if (_memoryStreamInternalReadSpan != null)
+		{
+			// This is 1.5 times faster than calling the `Read` method below
+			return _memoryStreamInternalReadSpan(count).ToArray();
+		}
 		var buffer = new byte[count];
 		int offset = 0;
 		do
