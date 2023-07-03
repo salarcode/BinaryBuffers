@@ -17,6 +17,28 @@ public abstract class BufferReaderBase : IBufferReader
 	private static readonly DecimalToDecimal _decimalToDecimal = (DecimalToDecimal)typeof(decimal)
 			  .GetMethod("ToDecimal", BindingFlags.Static | BindingFlags.NonPublic, new[] { typeof(ReadOnlySpan<byte>) })
 			  .CreateDelegate(typeof(DecimalToDecimal));
+	
+	delegate decimal CreateDecimal(int lo, int mid, int hi, int flags);
+	private static CreateDecimal _createDecimal;
+
+	private static void InitializeCreateDecimal()
+	{
+		var paramLo = Expression.Parameter(typeof(int), "lo");
+		var paramMid = Expression.Parameter(typeof(int), "mi");
+		var paramHi = Expression.Parameter(typeof(int), "hi");
+		var paramFlags = Expression.Parameter(typeof(int), "flags");
+
+		var ctor = typeof(Decimal).GetConstructor(
+			BindingFlags.Instance | BindingFlags.NonPublic,
+			null,
+			new[] { typeof(int), typeof(int), typeof(int), typeof(int) },
+			null);
+
+		var lambda = Expression.Lambda<CreateDecimal>(
+			Expression.New(ctor, paramLo, paramMid, paramHi, paramFlags), paramLo, paramMid, paramHi, paramFlags);
+
+		_createDecimal = lambda.Compile();
+	}
 #endif
 
 	/// <inheritdoc/>
@@ -51,24 +73,44 @@ public abstract class BufferReaderBase : IBufferReader
 	/// <inheritdoc/>
 	public abstract ReadOnlyMemory<byte> ReadMemory(int count);
 
+	/// <inheritdoc/>
 	public unsafe decimal ReadDecimal()
 	{
 		var span = InternalReadSpan(16);
 		try
 		{
-			return new decimal(
-#if NET6_0_OR_GREATER
-			stackalloc
-#else
-			new
-#endif
-			[]
+			if (BitConverter.IsLittleEndian)
 			{
-				BinaryPrimitives.ReadInt32LittleEndian(span),          // lo
-				BinaryPrimitives.ReadInt32LittleEndian(span.Slice(4)), // mid
-				BinaryPrimitives.ReadInt32LittleEndian(span.Slice(8)), // hi
-				BinaryPrimitives.ReadInt32LittleEndian(span.Slice(12)) // flags
-			});
+				return new decimal(
+#if NET6_0_OR_GREATER
+				stackalloc
+#else
+				new
+#endif
+				[]
+				{
+					Unsafe.ReadUnaligned<int>(ref MemoryMarshal.GetReference<byte>(span)),          // lo
+					Unsafe.ReadUnaligned<int>(ref MemoryMarshal.GetReference<byte>(span.Slice(4))), // mid
+					Unsafe.ReadUnaligned<int>(ref MemoryMarshal.GetReference<byte>(span.Slice(8))), // hi
+					Unsafe.ReadUnaligned<int>(ref MemoryMarshal.GetReference<byte>(span.Slice(12))) // flags
+				});
+			}
+			else
+			{
+				return new decimal(
+#if NET6_0_OR_GREATER
+				stackalloc
+#else
+				new
+#endif
+				[]
+				{
+					BinaryPrimitives.ReverseEndianness(Unsafe.ReadUnaligned<int>(ref MemoryMarshal.GetReference<byte>(span))),          // lo
+					BinaryPrimitives.ReverseEndianness(Unsafe.ReadUnaligned<int>(ref MemoryMarshal.GetReference<byte>(span.Slice(4)))), // mid
+					BinaryPrimitives.ReverseEndianness(Unsafe.ReadUnaligned<int>(ref MemoryMarshal.GetReference<byte>(span.Slice(8)))), // hi
+					BinaryPrimitives.ReverseEndianness(Unsafe.ReadUnaligned<int>(ref MemoryMarshal.GetReference<byte>(span.Slice(12)))) // flags
+				});
+			}
 		}
 		catch (ArgumentException e)
 		{
@@ -122,7 +164,7 @@ public abstract class BufferReaderBase : IBufferReader
 	public float ReadSingle()
 	{
 		var span = InternalReadSpan(4);
-		return Unsafe.ReadUnaligned<float>(ref MemoryMarshal.GetReference<byte>(span)); 
+		return Unsafe.ReadUnaligned<float>(ref MemoryMarshal.GetReference<byte>(span));
 	}
 #endif
 
