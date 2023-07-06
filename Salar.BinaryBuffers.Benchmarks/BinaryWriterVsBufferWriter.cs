@@ -23,117 +23,216 @@ public abstract class BinaryWriterVsBufferWriterBase
 	}
 }
 
-[BenchmarkCategory("WriteInt")]
-public class BinaryWriterVsBufferWriter_Int : BinaryWriterVsBufferWriterBase
+public class WritePerformanceTest
 {
-	[Benchmark(Baseline = true)]
-	public void BinaryWriter_WriteInt()
+	[BenchmarkCategory("WriteInt")]
+	public class BinaryWriterVsBufferWriter_Int : BinaryWriterVsBufferWriterBase
 	{
-		for (int i = 0; i < Loops; i++)
+		[Benchmark(Baseline = true)]
+		public void BinaryWriter_WriteInt()
+		{
+			for (int i = 0; i < Loops; i++)
+			{
+				_memoryStream.Position = 0;
+
+				_binaryWriter.Write(1024);
+				_binaryWriter.Write(1024L);
+			}
+		}
+
+		[Benchmark]
+		public void BufferWriter_WriteInt()
+		{
+			for (int i = 0; i < Loops; i++)
+			{
+				_bufferWriter.Position = 0;
+
+				_bufferWriter.Write(1024);
+				_bufferWriter.Write(1024L);
+			}
+		}
+
+		[Benchmark]
+		public void StreamWriter_WriteInt()
+		{
+			for (int i = 0; i < Loops; i++)
+			{
+				_memoryStream.Position = 0;
+
+				_streamWriter.Write(1024);
+				_streamWriter.Write(1024L);
+			}
+		}
+	}
+
+	[BenchmarkCategory("WriteFloat")]
+	public class BinaryWriterVsBufferWriter_Float : BinaryWriterVsBufferWriterBase
+	{
+		[Benchmark(Baseline = true)]
+		public void BinaryWriter_WriteFloat()
+		{
+			for (int i = 0; i < Loops; i++)
+			{
+				_memoryStream.Position = 0;
+
+				_binaryWriter.Write(1024.1024F);
+			}
+		}
+
+		[Benchmark]
+		public void BufferWriter_WriteFloat()
+		{
+			for (int i = 0; i < Loops; i++)
+			{
+				_bufferWriter.Position = 0;
+
+				_bufferWriter.Write(1024.1024F);
+			}
+		}
+
+		[Benchmark]
+		public void StreamWriter_WriteFloat()
+		{
+			for (int i = 0; i < Loops; i++)
+			{
+				_memoryStream.Position = 0;
+
+				_streamWriter.Write(1024.1024F);
+			}
+		}
+	}
+
+	[BenchmarkCategory("WriteDecimal")]
+	public class BinaryWriterVsBufferWriter_Decimal : BinaryWriterVsBufferWriterBase
+	{
+		[Benchmark(Baseline = true)]
+		public void BinaryWriter_WriteDecimal()
+		{
+			for (int i = 0; i < Loops; i++)
+			{
+				_memoryStream.Position = 0;
+
+				_binaryWriter.Write(1024.1024M);
+			}
+		}
+
+		[Benchmark]
+		public void BufferWriter_WriteDecimal()
+		{
+			for (int i = 0; i < Loops; i++)
+			{
+				_bufferWriter.Position = 0;
+
+				_bufferWriter.Write(1024.1024M);
+			}
+		}
+
+		[Benchmark]
+		public void StreamWriter_WriteDecimal()
+		{
+			for (int i = 0; i < Loops; i++)
+			{
+				_memoryStream.Position = 0;
+
+				_streamWriter.Write(1024.1024M);
+			}
+		}
+	}
+}
+
+
+public class WriteMemoryTest
+{
+	[BenchmarkCategory("MemWriteInt")]
+	public class BinaryWriterVsBufferWriter_Int : BinaryWriterVsBufferWriterBase
+	{
+		[IterationSetup]
+		public void IterationSetup()
 		{
 			_memoryStream.Position = 0;
+			_bufferWriter.Position = 0;
+			_streamWriter.Position = 0;
+		}
 
+		[Benchmark(Baseline = true)]
+		public void BinaryWriter_WriteInt()
+		{
 			_binaryWriter.Write(1024);
 			_binaryWriter.Write(1024L);
 		}
-	}
 
-	[Benchmark]
-	public void BufferWriter_WriteInt()
-	{
-		for (int i = 0; i < Loops; i++)
+		[Benchmark]
+		public void BufferWriter_WriteInt()
 		{
-			_bufferWriter.Position = 0;
-
 			_bufferWriter.Write(1024);
 			_bufferWriter.Write(1024L);
 		}
-	}
 
-	[Benchmark]
-	public void StreamWriter_WriteInt()
-	{
-		for (int i = 0; i < Loops; i++)
+		[Benchmark]
+		public void StreamWriter_WriteInt()
 		{
-			_memoryStream.Position = 0;
-
 			_streamWriter.Write(1024);
 			_streamWriter.Write(1024L);
 		}
 	}
-}
 
-[BenchmarkCategory("WriteFloat")]
-public class BinaryWriterVsBufferWriter_Float : BinaryWriterVsBufferWriterBase
-{
-	[Benchmark(Baseline = true)]
-	public void BinaryWriter_WriteFloat()
+	[BenchmarkCategory("MemWriteFloat")]
+	public class BinaryWriterVsBufferWriter_Float : BinaryWriterVsBufferWriterBase
 	{
-		for (int i = 0; i < Loops; i++)
+		[IterationSetup]
+		public void IterationSetup()
 		{
 			_memoryStream.Position = 0;
+			_bufferWriter.Position = 0;
+			_streamWriter.Position = 0;
+		}
 
+		[Benchmark(Baseline = true)]
+		public void BinaryWriter_WriteFloat()
+		{
 			_binaryWriter.Write(1024.1024F);
 		}
-	}
 
-	[Benchmark]
-	public void BufferWriter_WriteFloat()
-	{
-		for (int i = 0; i < Loops; i++)
+		[Benchmark]
+		public void BufferWriter_WriteFloat()
 		{
-			_bufferWriter.Position = 0;
-
 			_bufferWriter.Write(1024.1024F);
 		}
-	}
 
-	[Benchmark]
-	public void StreamWriter_WriteFloat()
-	{
-		for (int i = 0; i < Loops; i++)
+		[Benchmark]
+		public void StreamWriter_WriteFloat()
 		{
-			_memoryStream.Position = 0;
-
 			_streamWriter.Write(1024.1024F);
 		}
 	}
-}
 
-[BenchmarkCategory("WriteDecimal")]
-public class BinaryWriterVsBufferWriter_Decimal : BinaryWriterVsBufferWriterBase
-{
-	[Benchmark(Baseline = true)]
-	public void BinaryWriter_WriteDecimal()
+	[BenchmarkCategory("MemWriteDecimal")]
+	public class BinaryWriterVsBufferWriter_Decimal : BinaryWriterVsBufferWriterBase
 	{
-		for (int i = 0; i < Loops; i++)
+		[IterationSetup]
+		public void IterationSetup()
 		{
 			_memoryStream.Position = 0;
+			_bufferWriter.Position = 0;
+			_streamWriter.Position = 0;
+		}
 
+		[Benchmark(Baseline = true)]
+		public void BinaryWriter_WriteDecimal()
+		{
 			_binaryWriter.Write(1024.1024M);
 		}
-	}
 
-	[Benchmark]
-	public void BufferWriter_WriteDecimal()
-	{
-		for (int i = 0; i < Loops; i++)
+		[Benchmark]
+		public void BufferWriter_WriteDecimal()
 		{
-			_bufferWriter.Position = 0;
-
 			_bufferWriter.Write(1024.1024M);
 		}
-	}
 
-	[Benchmark]
-	public void StreamWriter_WriteDecimal()
-	{
-		for (int i = 0; i < Loops; i++)
+		[Benchmark]
+		public void StreamWriter_WriteDecimal()
 		{
-			_memoryStream.Position = 0;
-
 			_streamWriter.Write(1024.1024M);
 		}
 	}
 }
-

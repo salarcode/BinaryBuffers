@@ -16,10 +16,10 @@ public class StreamBufferReader : BufferReaderBase, IDisposable
 
 	private static readonly MethodInfo _memoryStreamInternalReadSpanMethodInfo = typeof(MemoryStream)
 		.GetMethod("InternalReadSpan", BindingFlags.Instance | BindingFlags.NonPublic);
+	private MemoryStreamInternalReadSpan _memoryStreamInternalReadSpan;
 
 	private byte[] _buffer;
 	private Stream _stream;
-	private MemoryStreamInternalReadSpan _memoryStreamInternalReadSpan;
 
 	/// <inheritdoc/>
 	public override int Offset => 0;
