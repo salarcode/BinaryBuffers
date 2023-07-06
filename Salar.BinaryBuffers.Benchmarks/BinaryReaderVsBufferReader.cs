@@ -29,6 +29,7 @@ public abstract class BinaryReaderVsBufferReaderBase
 	}
 }
 
+[BenchmarkCategory("ReadInt")]
 public class BinaryReaderVsBufferReader_Int : BinaryReaderVsBufferReaderBase
 {
 	[Benchmark(Baseline = true)]
@@ -92,6 +93,7 @@ public class BinaryReaderVsBufferReader_Int : BinaryReaderVsBufferReaderBase
 	}
 }
 
+[BenchmarkCategory("ReadDecimal")]
 public class BinaryReaderVsBufferReader_Decimal : BinaryReaderVsBufferReaderBase
 {
 	[Benchmark(Baseline = true)]
@@ -150,6 +152,7 @@ public class BinaryReaderVsBufferReader_Decimal : BinaryReaderVsBufferReaderBase
 	}
 }
 
+[BenchmarkCategory("ReadFloat")]
 public class BinaryReaderVsBufferReader_Float : BinaryReaderVsBufferReaderBase
 {
 	[Benchmark(Baseline = true)]

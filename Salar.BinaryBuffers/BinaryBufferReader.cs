@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace Salar.BinaryBuffers;
 
@@ -11,7 +12,7 @@ public sealed class BinaryBufferReader : BufferReaderBase
 	private byte[] _data;
 	private int _length;
 	private int _offset;
-	private int _relativePositon;
+	private int _relativePosition;
 	private int _position;
 
 	/// <summary>
@@ -29,7 +30,7 @@ public sealed class BinaryBufferReader : BufferReaderBase
 	/// </summary>
 	public override int Position
 	{
-		get => _relativePositon;
+		get => _relativePosition;
 		set
 		{
 			var newPosition = _offset + value;
@@ -37,13 +38,13 @@ public sealed class BinaryBufferReader : BufferReaderBase
 			if (value < 0) throw ExceptionHelper.PositionLessThanZeroException(nameof(value));
 			if (value > _length) throw ExceptionHelper.PositionGreaterThanLengthOfByteArrayException(nameof(value));
 
-			_relativePositon = value;
+			_relativePosition = value;
 			_position = newPosition;
 		}
 	}
 
 	/// <inheritdoc/>
-	public override int Remaining => _length - _relativePositon;
+	public override int Remaining => _length - _relativePosition;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="BinaryBufferReader"/> class based on the specified byte array.
@@ -79,20 +80,20 @@ public sealed class BinaryBufferReader : BufferReaderBase
 
 
 	/// <summary>
-	/// Resets the undelying bufer based on the specified byte array.
+	/// Resets the underlying buffer based on the specified byte array.
 	/// </summary>
 	/// <param name="data">The byte array to read from.</param>
 	public void ResetBuffer(byte[] data)
 	{
 		_data = data ?? throw new ArgumentNullException(nameof(data));
 		_position = 0;
-		_relativePositon = 0;
+		_relativePosition = 0;
 		_offset = 0;
 		_length = data.Length;
 	}
 
 	/// <summary>
-	/// Resets the undelying bufer based on the specified byte array.
+	/// Resets the underlying buffer based on the specified byte array.
 	/// <para>A provided offset and length specifies the boundaries to use for reading.</para>
 	/// </summary>
 	/// <param name="data">The byte array to read from.</param>
@@ -109,7 +110,7 @@ public sealed class BinaryBufferReader : BufferReaderBase
 		if (length > _data.Length - offset) throw ExceptionHelper.LengthGreaterThanEffectiveLengthOfByteArrayException();
 
 		_position = offset;
-		_relativePositon = 0;
+		_relativePosition = 0;
 		_offset = offset;
 		_length = length;
 	}
@@ -122,9 +123,64 @@ public sealed class BinaryBufferReader : BufferReaderBase
 	{
 		_data = data.Array ?? throw new ArgumentNullException(nameof(data));
 		_position = data.Offset;
-		_relativePositon = 0;
+		_relativePosition = 0;
 		_offset = data.Offset;
 		_length = data.Count;
+	}
+	/// <inheritdoc/>
+	public override float ReadSingle()
+	{
+		var position = Advance(4);
+		return Unsafe.As<byte, float>(ref _data[position]);
+	}
+
+	/// <inheritdoc/>
+	public override double ReadDouble()
+	{
+		var position = Advance(8);
+		return Unsafe.As<byte, double>(ref _data[position]);
+	}
+
+	/// <inheritdoc/>
+	public override short ReadInt16()
+	{
+		var position = Advance(2);
+		return Unsafe.As<byte, short>(ref _data[position]);
+	}
+
+	/// <inheritdoc/>
+	public override int ReadInt32()
+	{
+		var position = Advance(4);
+		return Unsafe.As<byte, int>(ref _data[position]);
+	}
+
+	/// <inheritdoc/>
+	public override long ReadInt64()
+	{
+		var position = Advance(8);
+		return Unsafe.As<byte, long>(ref _data[position]);
+	}
+
+	/// <inheritdoc/>
+	public override ushort ReadUInt16()
+	{
+		var position = Advance(2);
+		return Unsafe.As<byte, ushort>(ref _data[position]);
+	}
+
+	/// <inheritdoc/>
+	public override uint ReadUInt32()
+	{
+		var position = Advance(4);
+		return Unsafe.As<byte, uint>(ref _data[position]);
+	}
+
+	/// <inheritdoc/>
+	public override ulong ReadUInt64()
+	{
+		var position = Advance(8);
+		return Unsafe.As<byte, ulong>(ref _data[position]);
 	}
 
 	/// <inheritdoc/>
@@ -134,16 +190,16 @@ public sealed class BinaryBufferReader : BufferReaderBase
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public override ReadOnlySpan<byte> ReadSpan(int count) => InternalReadSpan(count);
-	
+
 	/// <inheritdoc/>
 	public override int Read(byte[] buffer, int index, int count)
 	{
 		if (count <= 0)
 			return 0;
 
-		int relPos = _relativePositon + count;
+		int relPos = _relativePosition + count;
 
-		if ((uint)relPos > (uint)_length)
+		if (unchecked((uint)relPos > (uint)_length))
 		{
 			count = relPos - _length;
 		}
@@ -163,18 +219,42 @@ public sealed class BinaryBufferReader : BufferReaderBase
 	{
 		int curPos = _position;
 		int newPos = curPos + 1;
-		int relPos = _relativePositon + 1;
+		int relPos = _relativePosition + 1;
 
-		if ((uint)relPos > (uint)_length)
+		if (unchecked((uint)relPos > (uint)_length))
 		{
-			_relativePositon = _length;
+			_relativePosition = _length;
 			throw ExceptionHelper.EndOfDataException();
 		}
 
-		_relativePositon = relPos;
+		_relativePosition = relPos;
 		_position = newPos;
 
 		return _data[curPos];
+	}
+
+	/// <summary>
+	/// Moves the position by `count` bytes and returns the new byte position.
+	/// </summary>
+	private int Advance(int count)
+	{
+		if (count <= 0)
+			return _position;
+
+		int curPos = _position;
+		int newPos = curPos + count;
+		int relPos = _relativePosition + count;
+
+		if (unchecked((uint)relPos > (uint)_length))
+		{
+			_relativePosition = _length;
+			throw ExceptionHelper.EndOfDataException();
+		}
+
+		_relativePosition = relPos;
+		_position = newPos;
+
+		return curPos;
 	}
 
 	/// <summary>
@@ -188,15 +268,15 @@ public sealed class BinaryBufferReader : BufferReaderBase
 
 		int curPos = _position;
 		int newPos = curPos + count;
-		int relPos = _relativePositon + count;
+		int relPos = _relativePosition + count;
 
-		if ((uint)relPos > (uint)_length)
+		if (unchecked((uint)relPos > (uint)_length))
 		{
-			_relativePositon = _length;
+			_relativePosition = _length;
 			throw ExceptionHelper.EndOfDataException();
 		}
 
-		_relativePositon = relPos;
+		_relativePosition = relPos;
 		_position = newPos;
 
 		return new ReadOnlySpan<byte>(_data, curPos, count);
@@ -209,15 +289,15 @@ public sealed class BinaryBufferReader : BufferReaderBase
 
 		int curPos = _position;
 		int newPos = curPos + count;
-		int relPos = _relativePositon + count;
+		int relPos = _relativePosition + count;
 
-		if ((uint)relPos > (uint)_length)
+		if (unchecked((uint)relPos > (uint)_length))
 		{
-			_relativePositon = _length;
+			_relativePosition = _length;
 			throw ExceptionHelper.EndOfDataException();
 		}
 
-		_relativePositon = relPos;
+		_relativePosition = relPos;
 		_position = newPos;
 
 		return new ReadOnlyMemory<byte>(_data, curPos, count);

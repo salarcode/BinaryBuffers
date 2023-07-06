@@ -120,28 +120,35 @@ public abstract class BufferReaderBase : IBufferReader
 	}
 
 	/// <inheritdoc/>
-	public double ReadDouble()
+	public virtual float ReadSingle()
+	{
+		var span = InternalReadSpan(4);
+		return Unsafe.ReadUnaligned<float>(ref MemoryMarshal.GetReference<byte>(span));
+	}
+
+	/// <inheritdoc/>
+	public virtual double ReadDouble()
 	{
 		var span = InternalReadSpan(8);
 		return Unsafe.ReadUnaligned<double>(ref MemoryMarshal.GetReference<byte>(span));
 	}
 
 	/// <inheritdoc/>
-	public short ReadInt16()
+	public virtual short ReadInt16()
 	{
 		var span = InternalReadSpan(2);
 		return Unsafe.ReadUnaligned<short>(ref MemoryMarshal.GetReference<byte>(span));
 	}
 
 	/// <inheritdoc/>
-	public int ReadInt32()
+	public virtual int ReadInt32()
 	{
 		var span = InternalReadSpan(4);
 		return Unsafe.ReadUnaligned<int>(ref MemoryMarshal.GetReference<byte>(span));
 	}
 
 	/// <inheritdoc/>
-	public long ReadInt64()
+	public virtual long ReadInt64()
 	{
 		var span = InternalReadSpan(8);
 		return Unsafe.ReadUnaligned<long>(ref MemoryMarshal.GetReference<byte>(span));
@@ -152,38 +159,21 @@ public abstract class BufferReaderBase : IBufferReader
 	public sbyte ReadSByte() => (sbyte)InternalReadByte();
 
 	/// <inheritdoc/>
-#if NETSTANDARD2_0
-	public unsafe float ReadSingle()
-	{
-		var m_buffer = InternalReadSpan(4);
-		uint tmpBuffer = (uint)(m_buffer[0] | m_buffer[1] << 8 | m_buffer[2] << 16 | m_buffer[3] << 24);
-
-		return *((float*)&tmpBuffer);
-	}
-#else
-	public float ReadSingle()
-	{
-		var span = InternalReadSpan(4);
-		return Unsafe.ReadUnaligned<float>(ref MemoryMarshal.GetReference<byte>(span));
-	}
-#endif
-
-	/// <inheritdoc/>
-	public ushort ReadUInt16()
+	public virtual ushort ReadUInt16()
 	{
 		var span = InternalReadSpan(2);
 		return Unsafe.ReadUnaligned<ushort>(ref MemoryMarshal.GetReference<byte>(span));
 	}
 
 	/// <inheritdoc/>
-	public uint ReadUInt32()
+	public virtual uint ReadUInt32()
 	{
 		var span = InternalReadSpan(4);
 		return Unsafe.ReadUnaligned<uint>(ref MemoryMarshal.GetReference<byte>(span));
 	}
 
 	/// <inheritdoc/>
-	public ulong ReadUInt64()
+	public virtual ulong ReadUInt64()
 	{
 		var span = InternalReadSpan(8);
 		return Unsafe.ReadUnaligned<ulong>(ref MemoryMarshal.GetReference<byte>(span));

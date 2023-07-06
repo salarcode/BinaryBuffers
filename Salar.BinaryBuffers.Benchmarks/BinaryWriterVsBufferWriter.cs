@@ -23,6 +23,7 @@ public abstract class BinaryWriterVsBufferWriterBase
 	}
 }
 
+[BenchmarkCategory("WriteInt")]
 public class BinaryWriterVsBufferWriter_Int : BinaryWriterVsBufferWriterBase
 {
 	[Benchmark(Baseline = true)]
@@ -62,7 +63,7 @@ public class BinaryWriterVsBufferWriter_Int : BinaryWriterVsBufferWriterBase
 	}
 }
 
-
+[BenchmarkCategory("WriteFloat")]
 public class BinaryWriterVsBufferWriter_Float : BinaryWriterVsBufferWriterBase
 {
 	[Benchmark(Baseline = true)]
@@ -99,6 +100,7 @@ public class BinaryWriterVsBufferWriter_Float : BinaryWriterVsBufferWriterBase
 	}
 }
 
+[BenchmarkCategory("WriteDecimal")]
 public class BinaryWriterVsBufferWriter_Decimal : BinaryWriterVsBufferWriterBase
 {
 	[Benchmark(Baseline = true)]
