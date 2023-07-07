@@ -36,29 +36,29 @@ Use `ResetBuffer` method in `BinaryBufferReader` and `BinaryBufferWriter` instea
 
 # Benchmarks
 
-Benchmarks shows up to **75%** improvement in writing and **32%** in reading.
+Benchmarks shows up to **92%** improvement in writing and **84%** in reading.
 
 | BinaryBufferReader |     |     |     |     |
 | --- | --- | --- | --- | --- |
 | **Method** | **Mean** | **Error** | **StdDev** | **Ratio** |
-| `BinaryReader_ReadInt` | 38.96 ms | 0.198 ms | 0.185 ms | baseline |
-| `BufferReader_ReadInt` | 26.51 ms | 0.125 ms | 0.104 ms |     -32% |
-| `BinaryReader_ReadDecimal` | 45.29 ms | 0.169 ms | 0.158 ms | baseline |
-| `BufferReader_ReadDecimal` | 43.49 ms | 0.296 ms | 0.247 ms |      -4% |
-| `BinaryReader_ReadFloat` | 22.66 ms | 0.049 ms | 0.044 ms | baseline |
-| `BufferReader_ReadFloat` | 15.91 ms | 0.071 ms | 0.067 ms |     -30% |
+| `BinaryReader_ReadInt` | 42.23 ms | 0.1487 ms | 0.1318 ms | baseline |
+| `BufferReader_ReadInt` |  5.53 ms | 0.0265 ms | 0.0221 ms |     -89% |
+| `BinaryReader_ReadDecimal` | 48.28 ms | 0.2038 ms | 0.1906 ms | baseline |
+| `BufferReader_ReadDecimal` | 34.75 ms | 0.3921 ms | 0.3476 ms |     -28% |
+| `BinaryReader_ReadFloat` | 25.76 ms | 0.1012 ms | 0.0947 ms | baseline |
+| `BufferReader_ReadFloat` |  3.75 ms | 0.0209 ms | 0.0195 ms |     -92% |
 
 | BinaryBufferWriter |     |     |     |     |
 | --- | --- | --- | --- | --- |
 | **Method** | **Mean** | **Error** | **StdDev** | **Ratio** |
-| `BinaryWriter_WriteInt` | 66.98 ms | 0.143 ms | 0.119 ms | baseline |
-| `BufferWriter_WriteInt` | 16.98 ms | 0.339 ms | 0.333 ms |     -75% |
-| `BinaryWriter_WriteDecimal` | 42.29 ms | 0.108 ms | 0.096 ms | baseline |
-| `BufferWriter_WriteDecimal` | 18.49 ms | 0.050 ms | 0.047 ms |     -56% |
-| `BinaryWriter_WriteFloat` | 34.86 ms | 0.494 ms | 0.462 ms | baseline |
-| `BufferWriter_WriteFloat` | 11.33 ms | 0.076 ms | 0.071 ms |     -67% |
+| `BinaryWriter_WriteInt` | 62.71 ms | 0.5090 ms | 0.4761 ms | baseline |
+| `BufferWriter_WriteInt` | 11.05 ms | 0.0307 ms | 0.0240 ms |     -77% |
+| `BinaryWriter_WriteDecimal` | 42.07 ms | 0.1556 ms | 0.1455 ms | baseline |
+| `BufferWriter_WriteDecimal` |  7.79 ms | 0.0191 ms | 0.0169 ms |     -84% |
+| `BinaryWriter_WriteFloat` | 33.38 ms | 0.1869 ms | 0.1561 ms | baseline |
+| `BufferWriter_WriteFloat` |  7.79 ms | 0.0191 ms | 0.0169 ms |     -84% |
 
-Performance tests were generated using **.NET 6.0.11** on:
+Performance tests were generated using **.NET 7.0.5** on:
 ```
 AMD Ryzen 9 5900X, 1 CPU, 24 logical and 12 physical cores
 ```

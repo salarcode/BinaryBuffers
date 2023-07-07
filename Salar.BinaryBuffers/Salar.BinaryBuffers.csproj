@@ -9,18 +9,15 @@
 		<Description>A high-performance implementation of BinaryReader and BinaryWriter which works on binary arrays directly by eliminating the need for an intermediate stream object.</Description>
 		<LangVersion>latest</LangVersion>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<AssemblyVersion>3.2.0</AssemblyVersion>
-		<Version>3.2.0</Version>
+		<AssemblyVersion>3.3.0</AssemblyVersion>
+		<Version>3.3.0</Version>
 		<PackageIcon>logo.png</PackageIcon>
 		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<PackageReleaseNotes>
-			* Improved the performance of the SequenceBufferReader.
-			* Improved the BinaryBufferMemoryReader.
-			* Added `Remaining` property to all readers.
-			* Added `RemainingToArray` methods to `BinaryBufferWriter`.
-			* Added `SimulateWrite` methods to `BinaryBufferWriter`.
+			* Improved the performance of BinaryBufferWriter.
+			* Improved the performance of BinaryBufferReader.
 		</PackageReleaseNotes>
 		<SignAssembly>True</SignAssembly>
 		<AssemblyOriginatorKeyFile>Salar.BinaryBuffers.snk</AssemblyOriginatorKeyFile>
