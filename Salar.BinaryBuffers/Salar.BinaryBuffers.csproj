@@ -9,15 +9,14 @@
 		<Description>A high-performance implementation of BinaryReader and BinaryWriter which works on binary arrays directly by eliminating the need for an intermediate stream object.</Description>
 		<LangVersion>latest</LangVersion>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<AssemblyVersion>3.3.0</AssemblyVersion>
-		<Version>3.3.0</Version>
+		<AssemblyVersion>3.4.0</AssemblyVersion>
+		<Version>3.4.0</Version>
 		<PackageIcon>logo.png</PackageIcon>
 		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<PackageReleaseNotes>
-			* Improved the performance of BinaryBufferWriter.
-			* Improved the performance of BinaryBufferReader.
+			* Added BinarySpanBufferWriter: a zero-allocation ref struct writer that operates directly on Span&lt;byte&gt;, with support for stackalloc buffers.
 		</PackageReleaseNotes>
 		<SignAssembly>True</SignAssembly>
 		<AssemblyOriginatorKeyFile>Salar.BinaryBuffers.snk</AssemblyOriginatorKeyFile>

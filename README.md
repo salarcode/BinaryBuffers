@@ -27,12 +27,43 @@ var year = reader.ReadInt32();
 var time = reader.ReadDouble();
 ```
 
+## BinarySpanBufferWriter
+
+`BinarySpanBufferWriter` is a zero-allocation, high-performance writer that operates directly on a `Span<byte>`. As a `ref struct`, it can work with stack-allocated memory (`stackalloc`) for maximum performance with no heap allocations.
+
+```csharp
+// Stack-allocated buffer — no heap allocation
+Span<byte> buffer = stackalloc byte[1024];
+var writer = new BinarySpanBufferWriter(buffer);
+
+writer.Write(2022);
+writer.Write(8.11);
+
+// Get the written bytes as a ReadOnlySpan<byte>
+ReadOnlySpan<byte> written = writer.ToReadOnlySpan();
+```
+
+`BinarySpanBufferWriter` implements `IBufferWriter` and works seamlessly with generic methods:
+
+```csharp
+void Serialize<TBufferWriter>(TBufferWriter writer, int id) where TBufferWriter : IBufferWriter
+{
+    writer.Write(id);
+}
+
+Span<byte> buffer = stackalloc byte[1024];
+var writer = new BinarySpanBufferWriter(buffer);
+Serialize(writer, 42); // Works via generic constraint — no boxing
+```
+
+Because it is a `ref struct`, `BinarySpanBufferWriter` cannot be stored as a class field, used in async methods, or boxed to an interface directly. Use `BinaryBufferWriter` when those capabilities are needed.
+
 ## Additional Goodies
 Use `StreamBufferWriter` as a drop in replacement for `BinaryWriter` to gain ~10% improvement in performance.
 
 Use `StreamBufferReader` as a drop in replacement for `BinaryReader`. Note that there is no performance benefit in using `StreamBufferReader`, it just helps widen the use of `IBufferReader`.
 
-Use `ResetBuffer` method in `BinaryBufferReader` and `BinaryBufferWriter` instead of creating a new one and have less allocations!
+Use `ResetBuffer` method in `BinaryBufferReader`, `BinaryBufferWriter`, and `BinarySpanBufferWriter` instead of creating a new one and have less allocations!
 
 # Benchmarks
 
