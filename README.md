@@ -20,12 +20,6 @@ BinaryBuffers is a high-performance .NET library for reading and writing primiti
 dotnet add package Salar.BinaryBuffers
 ```
 
-Targets:
-
-- `netstandard2.0`
-- `net6.0`
-- `net7.0`
-
 ## Quick start
 
 ```csharp
@@ -44,11 +38,43 @@ var year = reader.ReadInt32();
 var value = reader.ReadDouble();
 ```
 
-## Main types
+## BinarySpanBufferWriter
+
+`BinarySpanBufferWriter` is a zero-allocation, high-performance writer that operates directly on a `Span<byte>`. As a `ref struct`, it can work with stack-allocated memory (`stackalloc`) for maximum performance with no heap allocations.
+
+```csharp
+// Stack-allocated buffer — no heap allocation
+Span<byte> buffer = stackalloc byte[1024];
+var writer = new BinarySpanBufferWriter(buffer);
+
+writer.Write(2022);
+writer.Write(8.11);
+
+// Get the written bytes as a ReadOnlySpan<byte>
+ReadOnlySpan<byte> written = writer.ToReadOnlySpan();
+```
+
+`BinarySpanBufferWriter` implements `IBufferWriter` and works seamlessly with generic methods:
+
+```csharp
+void Serialize<TBufferWriter>(TBufferWriter writer, int id) where TBufferWriter : IBufferWriter
+{
+    writer.Write(id);
+}
+
+Span<byte> buffer = stackalloc byte[1024];
+var writer = new BinarySpanBufferWriter(buffer);
+Serialize(writer, 42); // Works via generic constraint — no boxing
+```
+
+Because it is a `ref struct`, `BinarySpanBufferWriter` cannot be stored as a class field, used in async methods, or boxed to an interface directly. Use `BinaryBufferWriter` when those capabilities are needed.
+
+## Additional Goodies
+Use `StreamBufferWriter` as a drop in replacement for `BinaryWriter` to gain ~10% improvement in performance.
 
 ### `BinaryBufferWriter`
 
-Use `BinaryBufferWriter` when you already have a `byte[]` and want fast writes for primitive values.
+Use `ResetBuffer` method in `BinaryBufferReader`, `BinaryBufferWriter`, and `BinarySpanBufferWriter` instead of creating a new one and have less allocations!
 
 ```csharp
 using Salar.BinaryBuffers;
