@@ -106,27 +106,27 @@ Benchmarks in this repository show substantial improvements for common primitive
 
 Lower is better.
 
-| Method | Mean | Error | StdDev | Compared to baseline |
+| Method | Mean | Error | StdDev | Relative time |
 | --- | --- | --- | --- | --- |
-| `BinaryReader_ReadInt` | 42.23 ms | 0.1487 ms | 0.1318 ms | baseline |
-| `BufferReader_ReadInt` | 5.53 ms | 0.0265 ms | 0.0221 ms | 87% lower time |
-| `BinaryReader_ReadDecimal` | 48.28 ms | 0.2038 ms | 0.1906 ms | baseline |
-| `BufferReader_ReadDecimal` | 34.75 ms | 0.3921 ms | 0.3476 ms | 28% lower time |
-| `BinaryReader_ReadFloat` | 25.76 ms | 0.1012 ms | 0.0947 ms | baseline |
-| `BufferReader_ReadFloat` | 3.75 ms | 0.0209 ms | 0.0195 ms | 85% lower time |
+| `BinaryReader_ReadInt` | 42.23 ms | 0.1487 ms | 0.1318 ms | 1.00x |
+| `BufferReader_ReadInt` | 5.53 ms | 0.0265 ms | 0.0221 ms | 0.13x |
+| `BinaryReader_ReadDecimal` | 48.28 ms | 0.2038 ms | 0.1906 ms | 1.00x |
+| `BufferReader_ReadDecimal` | 34.75 ms | 0.3921 ms | 0.3476 ms | 0.72x |
+| `BinaryReader_ReadFloat` | 25.76 ms | 0.1012 ms | 0.0947 ms | 1.00x |
+| `BufferReader_ReadFloat` | 3.75 ms | 0.0209 ms | 0.0195 ms | 0.15x |
 
 ### Write benchmarks
 
 Lower is better.
 
-| Method | Mean | Error | StdDev | Compared to baseline |
+| Method | Mean | Error | StdDev | Relative time |
 | --- | --- | --- | --- | --- |
-| `BinaryWriter_WriteInt` | 62.71 ms | 0.5090 ms | 0.4761 ms | baseline |
-| `BufferWriter_WriteInt` | 11.05 ms | 0.0307 ms | 0.0240 ms | 82% lower time |
-| `BinaryWriter_WriteDecimal` | 42.07 ms | 0.1556 ms | 0.1455 ms | baseline |
-| `BufferWriter_WriteDecimal` | 7.79 ms | 0.0191 ms | 0.0169 ms | 81% lower time |
-| `BinaryWriter_WriteFloat` | 33.38 ms | 0.1869 ms | 0.1561 ms | baseline |
-| `BufferWriter_WriteFloat` | 7.79 ms | 0.0191 ms | 0.0169 ms | 77% lower time |
+| `BinaryWriter_WriteInt` | 62.71 ms | 0.5090 ms | 0.4761 ms | 1.00x |
+| `BufferWriter_WriteInt` | 11.05 ms | 0.0307 ms | 0.0240 ms | 0.18x |
+| `BinaryWriter_WriteDecimal` | 42.07 ms | 0.1556 ms | 0.1455 ms | 1.00x |
+| `BufferWriter_WriteDecimal` | 7.79 ms | 0.0191 ms | 0.0169 ms | 0.19x |
+| `BinaryWriter_WriteFloat` | 33.38 ms | 0.1869 ms | 0.1561 ms | 1.00x |
+| `BufferWriter_WriteFloat` | 7.79 ms | 0.0191 ms | 0.0169 ms | 0.23x |
 
 These results were generated with the benchmark project in this repository using .NET 7.0.5 on:
 
