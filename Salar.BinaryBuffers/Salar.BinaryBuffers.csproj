@@ -5,7 +5,7 @@
 		<Authors>Salar Khalilzadeh</Authors>
 		<PackageTags>binary buffers binaryreader binarywriter binaryprimitives</PackageTags>
 		<PackageProjectUrl>https://github.com/salarcode/BinaryBuffers</PackageProjectUrl>
-		<Copyright>Copyright © 2023</Copyright>
+		<Copyright>Copyright © 2026</Copyright>
 		<Description>A high-performance implementation of BinaryReader and BinaryWriter which works on binary arrays directly by eliminating the need for an intermediate stream object.</Description>
 		<LangVersion>latest</LangVersion>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
