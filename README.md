@@ -128,7 +128,7 @@ Lower is better.
 | `BinaryWriter_WriteFloat` | 33.38 ms | 0.1869 ms | 0.1561 ms | 1.00x |
 | `BufferWriter_WriteFloat` | 7.79 ms | 0.0191 ms | 0.0169 ms | 0.23x |
 
-These results were generated with the benchmark project in this repository using .NET 7.0.5 on:
+These benchmark results were last recorded with the benchmark project in this repository using .NET 7.0.5 on:
 
 ```text
 AMD Ryzen 9 5900X, 1 CPU, 24 logical and 12 physical cores
