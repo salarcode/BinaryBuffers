@@ -20,12 +20,6 @@ BinaryBuffers is a high-performance .NET library for reading and writing primiti
 dotnet add package Salar.BinaryBuffers
 ```
 
-Targets:
-
-- `netstandard2.0`
-- `net6.0`
-- `net7.0`
-
 ## Quick start
 
 ```csharp
