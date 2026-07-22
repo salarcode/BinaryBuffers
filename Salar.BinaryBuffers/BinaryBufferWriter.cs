@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Buffers.Binary;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 #if NET6_0_OR_GREATER
 using System.Runtime.InteropServices;
@@ -298,6 +299,7 @@ public sealed class BinaryBufferWriter : BufferWriterBase
 	{
 		var pos = _position;
 		Advance(4);
+
 #if NET6_0_OR_GREATER
 		ref byte destination = ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(_buffer), pos);
 		Unsafe.WriteUnaligned(ref destination, value);
@@ -453,17 +455,30 @@ public sealed class BinaryBufferWriter : BufferWriterBase
 	private void Advance(int count)
 	{
 		var newPos = _position + count;
-		int relPos = _relativePositon + count;
 
-		if ((uint)relPos > (uint)_length)
+		// Fast path: Bound check using unsigned comparison
+		if ((uint)newPos > (uint)_buffer.Length)
 		{
-			_relativePositon = _length;
-			throw ExceptionHelper.EndOfDataException();
+			ThrowEndOfDataException();
 		}
 
-		_relativePositon = relPos;
 		_position = newPos;
 
-		if (count > 0) _writtenLength = Math.Max(_relativePositon, _writtenLength);
+		// Fast branchless/simplified tracker update:
+		if (newPos > _writtenLength)
+		{
+			_writtenLength = newPos;
+		}
+	}
+
+	// Cold path separated so the hot path remains hyper-compact in CPU instruction cache
+#if NET6_0_OR_GREATER
+	[DoesNotReturn]
+#endif
+	[MethodImpl(MethodImplOptions.NoInlining)]
+	private void ThrowEndOfDataException()
+	{
+		_position = _buffer.Length;
+		throw ExceptionHelper.EndOfDataException();
 	}
 }

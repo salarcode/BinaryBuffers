@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Buffers.Binary;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 #if NET6_0_OR_GREATER
 using System.Runtime.InteropServices;
@@ -298,13 +300,13 @@ public ref struct BinarySpanBufferWriter: IBufferWriter
 		Advance(4);
 
 #if NET6_0_OR_GREATER
-		ref byte destination = ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), pos);
-		Unsafe.WriteUnaligned(ref destination, value);
+		// Get direct reference to the byte at 'pos' inside the Span
+		ref byte refPos = ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), pos);
+
+		// Write 4 bytes unaligned in a single CPU instruction
+		Unsafe.WriteUnaligned(ref refPos, value);
 #else
-		_buffer[pos + 0] = (byte)value;
-		_buffer[pos + 1] = (byte)(value >> 8);
-		_buffer[pos + 2] = (byte)(value >> 16);
-		_buffer[pos + 3] = (byte)(value >> 24);
+		BinaryPrimitives.WriteInt32LittleEndian(_buffer.Slice(pos), value);
 #endif
 	}
 
@@ -443,14 +445,29 @@ public ref struct BinarySpanBufferWriter: IBufferWriter
 	{
 		var newPos = _position + count;
 
+		// Fast path: Bound check using unsigned comparison
 		if ((uint)newPos > (uint)_buffer.Length)
 		{
-			_position = _buffer.Length;
-			throw ExceptionHelper.EndOfDataException();
+			ThrowEndOfDataException();
 		}
 
 		_position = newPos;
 
-		if (count > 0) _writtenLength = Math.Max(_position, _writtenLength);
+		// Fast branchless/simplified tracker update:
+		if (newPos > _writtenLength)
+		{
+			_writtenLength = newPos;
+		}
+	}
+
+	// Cold path separated so the hot path remains hyper-compact in CPU instruction cache
+#if NET6_0_OR_GREATER
+	[DoesNotReturn]
+#endif
+	[MethodImpl(MethodImplOptions.NoInlining)]
+	private void ThrowEndOfDataException()
+	{
+		_position = _buffer.Length;
+		throw ExceptionHelper.EndOfDataException();
 	}
 }
