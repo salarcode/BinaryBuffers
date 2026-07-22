@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers.Binary;
 using System.Runtime.CompilerServices;
 #if NET6_0_OR_GREATER
 using System.Runtime.InteropServices;
@@ -297,15 +298,11 @@ public sealed class BinaryBufferWriter : BufferWriterBase
 	{
 		var pos = _position;
 		Advance(4);
-
 #if NET6_0_OR_GREATER
-		var span = _buffer.AsSpan(pos);
-		Unsafe.WriteUnaligned<int>(ref MemoryMarshal.GetReference<byte>(span), value);
+		ref byte destination = ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(_buffer), pos);
+		Unsafe.WriteUnaligned(ref destination, value);
 #else
-		_buffer[pos + 0] = (byte)value;
-		_buffer[pos + 1] = (byte)(value >> 8);
-		_buffer[pos + 2] = (byte)(value >> 16);
-		_buffer[pos + 3] = (byte)(value >> 24);
+		BinaryPrimitives.WriteInt32LittleEndian(_buffer.AsSpan(pos), value);
 #endif
 	}
 
@@ -339,8 +336,8 @@ public sealed class BinaryBufferWriter : BufferWriterBase
 		Advance(8);
 
 #if NET6_0_OR_GREATER
-		var span = _buffer.AsSpan(pos);
-		Unsafe.WriteUnaligned<long>(ref MemoryMarshal.GetReference<byte>(span), value);
+		ref byte destination = ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(_buffer), pos);
+		Unsafe.WriteUnaligned(ref destination, value);
 #else
 		var buff = _buffer;
 		buff[pos + 0] = (byte)value;
@@ -364,8 +361,8 @@ public sealed class BinaryBufferWriter : BufferWriterBase
 		Advance(8);
 
 #if NET6_0_OR_GREATER
-		var span = _buffer.AsSpan(pos);
-		Unsafe.WriteUnaligned<ulong>(ref MemoryMarshal.GetReference<byte>(span), value);
+		ref byte destination = ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(_buffer), pos);
+		Unsafe.WriteUnaligned(ref destination, value);
 #else
 		var buff = _buffer;
 		buff[pos + 0] = (byte)value;

@@ -298,8 +298,8 @@ public ref struct BinarySpanBufferWriter: IBufferWriter
 		Advance(4);
 
 #if NET6_0_OR_GREATER
-		var span = _buffer.Slice(pos);
-		Unsafe.WriteUnaligned<int>(ref MemoryMarshal.GetReference<byte>(span), value);
+		ref byte destination = ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), pos);
+		Unsafe.WriteUnaligned(ref destination, value);
 #else
 		_buffer[pos + 0] = (byte)value;
 		_buffer[pos + 1] = (byte)(value >> 8);
@@ -338,8 +338,8 @@ public ref struct BinarySpanBufferWriter: IBufferWriter
 		Advance(8);
 
 #if NET6_0_OR_GREATER
-		var span = _buffer.Slice(pos);
-		Unsafe.WriteUnaligned<long>(ref MemoryMarshal.GetReference<byte>(span), value);
+		ref byte destination = ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), pos);
+		Unsafe.WriteUnaligned(ref destination, value);
 #else
 		var buff = _buffer;
 		buff[pos + 0] = (byte)value;
@@ -363,8 +363,8 @@ public ref struct BinarySpanBufferWriter: IBufferWriter
 		Advance(8);
 
 #if NET6_0_OR_GREATER
-		var span = _buffer.Slice(pos);
-		Unsafe.WriteUnaligned<ulong>(ref MemoryMarshal.GetReference<byte>(span), value);
+		ref byte destination = ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), pos);
+		Unsafe.WriteUnaligned(ref destination, value);
 #else
 		var buff = _buffer;
 		buff[pos + 0] = (byte)value;
