@@ -77,40 +77,29 @@ public abstract class BufferReaderBase : IBufferReader
 	public unsafe decimal ReadDecimal()
 	{
 		var span = InternalReadSpan(16);
+		ref byte data = ref MemoryMarshal.GetReference(span);
+		var lo = Unsafe.ReadUnaligned<int>(ref data);
+		var mid = Unsafe.ReadUnaligned<int>(ref Unsafe.Add(ref data, 4));
+		var hi = Unsafe.ReadUnaligned<int>(ref Unsafe.Add(ref data, 8));
+		var flags = Unsafe.ReadUnaligned<int>(ref Unsafe.Add(ref data, 12));
+
+		if (!BitConverter.IsLittleEndian)
+		{
+			lo = BinaryPrimitives.ReverseEndianness(lo);
+			mid = BinaryPrimitives.ReverseEndianness(mid);
+			hi = BinaryPrimitives.ReverseEndianness(hi);
+			flags = BinaryPrimitives.ReverseEndianness(flags);
+		}
+
 		try
 		{
-			if (BitConverter.IsLittleEndian)
-			{
-				return new decimal(
+			return new decimal(
 #if NET6_0_OR_GREATER
 				stackalloc
 #else
 				new
 #endif
-				[]
-				{
-					Unsafe.ReadUnaligned<int>(ref MemoryMarshal.GetReference<byte>(span)),          // lo
-					Unsafe.ReadUnaligned<int>(ref MemoryMarshal.GetReference<byte>(span.Slice(4))), // mid
-					Unsafe.ReadUnaligned<int>(ref MemoryMarshal.GetReference<byte>(span.Slice(8))), // hi
-					Unsafe.ReadUnaligned<int>(ref MemoryMarshal.GetReference<byte>(span.Slice(12))) // flags
-				});
-			}
-			else
-			{
-				return new decimal(
-#if NET6_0_OR_GREATER
-				stackalloc
-#else
-				new
-#endif
-				[]
-				{
-					BinaryPrimitives.ReverseEndianness(Unsafe.ReadUnaligned<int>(ref MemoryMarshal.GetReference<byte>(span))),          // lo
-					BinaryPrimitives.ReverseEndianness(Unsafe.ReadUnaligned<int>(ref MemoryMarshal.GetReference<byte>(span.Slice(4)))), // mid
-					BinaryPrimitives.ReverseEndianness(Unsafe.ReadUnaligned<int>(ref MemoryMarshal.GetReference<byte>(span.Slice(8)))), // hi
-					BinaryPrimitives.ReverseEndianness(Unsafe.ReadUnaligned<int>(ref MemoryMarshal.GetReference<byte>(span.Slice(12)))) // flags
-				});
-			}
+				[] { lo, mid, hi, flags });
 		}
 		catch (ArgumentException e)
 		{
