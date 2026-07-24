@@ -219,7 +219,7 @@ public class ReadMemoryTests
 {
 	[MemoryDiagnoser]
 	[BenchmarkCategory("Mem_ReadInt")]
-	public class BinaryReaderVsBufferReader_Int : BinaryReaderVsBufferReaderBase
+	public class MemoryBinaryReaderVsBufferReader_Int : BinaryReaderVsBufferReaderBase
 	{
 		[IterationSetup]
 		public void IterationSetup()
@@ -268,7 +268,7 @@ public class ReadMemoryTests
 
 	[MemoryDiagnoser]
 	[BenchmarkCategory("Mem_ReadDecimal")]
-	public class BinaryReaderVsBufferReader_Decimal : BinaryReaderVsBufferReaderBase
+	public class MemoryBinaryReaderVsBufferReader_Decimal : BinaryReaderVsBufferReaderBase
 	{
 		[IterationSetup]
 		public void IterationSetup()
@@ -312,7 +312,7 @@ public class ReadMemoryTests
 
 	[MemoryDiagnoser]
 	[BenchmarkCategory("Mem_ReadFloat")]
-	public class BinaryReaderVsBufferReader_Float : BinaryReaderVsBufferReaderBase
+	public class MemoryBinaryReaderVsBufferReader_Float : BinaryReaderVsBufferReaderBase
 	{
 		[IterationSetup]
 		public void IterationSetup()

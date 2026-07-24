@@ -50,9 +50,9 @@ public static class App
 				break;
 			case '2':
 				BenchmarkSwitcher.FromTypes(new[] {
-					typeof(ReadMemoryTests.BinaryReaderVsBufferReader_Int),
-					typeof(ReadMemoryTests.BinaryReaderVsBufferReader_Float),
-					typeof(ReadMemoryTests.BinaryReaderVsBufferReader_Decimal),
+					typeof(ReadMemoryTests.MemoryBinaryReaderVsBufferReader_Int),
+					typeof(ReadMemoryTests.MemoryBinaryReaderVsBufferReader_Float),
+					typeof(ReadMemoryTests.MemoryBinaryReaderVsBufferReader_Decimal),
 
 					typeof(WriteMemoryTest.MemoryTestBinaryWriterVsBufferWriter_Int),
 					typeof(WriteMemoryTest.MemoryTestBinaryWriterVsBufferWriter_Float),
