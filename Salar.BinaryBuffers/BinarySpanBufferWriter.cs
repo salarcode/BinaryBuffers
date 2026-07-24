@@ -125,7 +125,7 @@ public ref struct BinarySpanBufferWriter: IBufferWriter
 	public void Write(bool value)
 	{
 		var pos = _position;
-		Advance(1);
+		AdvanceOne();
 
 		_buffer[pos] = (byte)(value ? 1 : 0);
 	}
@@ -137,7 +137,7 @@ public ref struct BinarySpanBufferWriter: IBufferWriter
 	public void Write(byte value)
 	{
 		var pos = _position;
-		Advance(1);
+		AdvanceOne();
 
 		_buffer[pos] = value;
 	}
@@ -149,7 +149,7 @@ public ref struct BinarySpanBufferWriter: IBufferWriter
 	public void Write(sbyte value)
 	{
 		var pos = _position;
-		Advance(1);
+		AdvanceOne();
 
 		_buffer[pos] = (byte)value;
 	}
@@ -404,6 +404,24 @@ public ref struct BinarySpanBufferWriter: IBufferWriter
 	public void SimulateWrite(int count)
 	{
 		Advance(count);
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private void AdvanceOne()
+	{
+		var newPos = _position + 1;
+
+		if ((uint)newPos > (uint)_buffer.Length)
+		{
+			ThrowEndOfDataException();
+		}
+
+		_position = newPos;
+
+		if ((uint)newPos > (uint)_writtenLength)
+		{
+			_writtenLength = newPos;
+		}
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]

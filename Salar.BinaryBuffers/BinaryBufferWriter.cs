@@ -126,7 +126,7 @@ public sealed class BinaryBufferWriter : BufferWriterBase
 	public override void Write(bool value)
 	{
 		var pos = _position;
-		Advance(1);
+		AdvanceOne();
 
 		_buffer[pos] = (byte)(value ? 1 : 0);
 	}
@@ -138,7 +138,7 @@ public sealed class BinaryBufferWriter : BufferWriterBase
 	public override void Write(byte value)
 	{
 		var pos = _position;
-		Advance(1);
+		AdvanceOne();
 
 		_buffer[pos] = value;
 	}
@@ -150,7 +150,7 @@ public sealed class BinaryBufferWriter : BufferWriterBase
 	public override void Write(sbyte value)
 	{
 		var pos = _position;
-		Advance(1);
+		AdvanceOne();
 
 		_buffer[pos] = (byte)value;
 	}
@@ -167,7 +167,7 @@ public sealed class BinaryBufferWriter : BufferWriterBase
 		var length = buffer.Length;
 		Advance(length);
 
-		Array.Copy(buffer, 0, _buffer, pos, length);
+		buffer.AsSpan().CopyTo(_buffer.AsSpan(pos, length));
 	}
 
 	/// <summary>
@@ -183,7 +183,7 @@ public sealed class BinaryBufferWriter : BufferWriterBase
 		var pos = _position;
 		Advance(length);
 
-		Array.Copy(buffer, offset, _buffer, pos, length);
+		buffer.AsSpan(offset, length).CopyTo(_buffer.AsSpan(pos, length));
 	}
 
 	/// <summary>
@@ -414,6 +414,24 @@ public sealed class BinaryBufferWriter : BufferWriterBase
 	public void SimulateWrite(int count)
 	{
 		Advance(count);
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private void AdvanceOne()
+	{
+		var newPos = _position + 1;
+
+		if ((uint)newPos > (uint)_buffer.Length)
+		{
+			ThrowEndOfDataException();
+		}
+
+		_position = newPos;
+
+		if ((uint)newPos > (uint)_writtenLength)
+		{
+			_writtenLength = newPos;
+		}
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
