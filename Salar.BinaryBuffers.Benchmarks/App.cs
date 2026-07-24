@@ -6,8 +6,14 @@ namespace Salar.BinaryBuffers.Benchmarks;
 
 public static class App
 {
-	public static void Main()
+	public static void Main(string[] args)
 	{
+		if (args.Length > 0)
+		{
+			BenchmarkSwitcher.FromAssembly(typeof(App).Assembly).Run(args);
+			return;
+		}
+
 		Console.WriteLine("Welcome to BinaryBuffers benchmark!");
 #if DEBUG
 		Console.WriteLine("**********************************************");		

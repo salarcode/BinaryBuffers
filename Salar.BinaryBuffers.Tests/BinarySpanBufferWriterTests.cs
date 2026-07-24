@@ -280,6 +280,18 @@ public class BinarySpanBufferWriterTests
 		}
 
 		[Fact]
+		public void WriteReadOnlySpan_with_overlapping_source_should_copy_correctly()
+		{
+			var buffer = new byte[] { 1, 2, 3, 4, 5, 6 };
+			var writer = new BinarySpanBufferWriter(buffer);
+			writer.Position = 1;
+
+			writer.Write(buffer.AsSpan(0, 4));
+
+			Assert.Equal(new byte[] { 1, 1, 2, 3, 4, 6 }, buffer);
+		}
+
+		[Fact]
 		public void WriteNull_should_throw()
 		{
 			var writer = _fixture.CreateWriter();
