@@ -196,8 +196,8 @@ public sealed class BinaryBufferWriter : BufferWriterBase
 		Advance(16);
 
 #if NET6_0_OR_GREATER
-		Span<byte> span = _buffer.AsSpan(pos);
-		decimal.GetBits(value, MemoryMarshal.Cast<byte, int>(span));
+		ref byte destination = ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(_buffer), pos);
+		decimal.GetBits(value, MemoryMarshal.CreateSpan(ref Unsafe.As<byte, int>(ref destination), 4));
 #else
 		var bits = decimal.GetBits(value);
 
@@ -218,19 +218,11 @@ public sealed class BinaryBufferWriter : BufferWriterBase
 		Advance(8);
 
 #if NET6_0_OR_GREATER
-		var span = _buffer.AsSpan(pos);
-		Unsafe.WriteUnaligned<double>(ref MemoryMarshal.GetReference<byte>(span), value);
+		ref byte destination = ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(_buffer), pos);
+		Unsafe.WriteUnaligned(ref destination, value);
 #else
-		var buff = _buffer;
 		ulong tmpValue = *(ulong*)&value;
-		buff[pos + 0] = (byte)tmpValue;
-		buff[pos + 1] = (byte)(tmpValue >> 8);
-		buff[pos + 2] = (byte)(tmpValue >> 16);
-		buff[pos + 3] = (byte)(tmpValue >> 24);
-		buff[pos + 4] = (byte)(tmpValue >> 32);
-		buff[pos + 5] = (byte)(tmpValue >> 40);
-		buff[pos + 6] = (byte)(tmpValue >> 48);
-		buff[pos + 7] = (byte)(tmpValue >> 56);
+		BinaryPrimitives.WriteUInt64LittleEndian(_buffer.AsSpan(pos), tmpValue);
 #endif
 	}
 
@@ -244,14 +236,11 @@ public sealed class BinaryBufferWriter : BufferWriterBase
 		Advance(4);
 
 #if NET6_0_OR_GREATER
-		var span = _buffer.AsSpan(pos);
-		Unsafe.WriteUnaligned<float>(ref MemoryMarshal.GetReference<byte>(span), value);
+		ref byte destination = ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(_buffer), pos);
+		Unsafe.WriteUnaligned(ref destination, value);
 #else
 		uint tmpValue = *(uint*)&value;
-		_buffer[pos + 0] = (byte)tmpValue;
-		_buffer[pos + 1] = (byte)(tmpValue >> 8);
-		_buffer[pos + 2] = (byte)(tmpValue >> 16);
-		_buffer[pos + 3] = (byte)(tmpValue >> 24);
+		BinaryPrimitives.WriteUInt32LittleEndian(_buffer.AsSpan(pos), tmpValue);
 #endif
 	}
 
@@ -265,11 +254,10 @@ public sealed class BinaryBufferWriter : BufferWriterBase
 		Advance(2);
 
 #if NET6_0_OR_GREATER
-		var span = _buffer.AsSpan(pos);
-		Unsafe.WriteUnaligned<short>(ref MemoryMarshal.GetReference<byte>(span), value);
+		ref byte destination = ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(_buffer), pos);
+		Unsafe.WriteUnaligned(ref destination, value);
 #else
-		_buffer[pos + 0] = (byte)value;
-		_buffer[pos + 1] = (byte)(value >> 8);
+		BinaryPrimitives.WriteInt16LittleEndian(_buffer.AsSpan(pos), value);
 #endif
 	}
 
@@ -283,11 +271,10 @@ public sealed class BinaryBufferWriter : BufferWriterBase
 		Advance(2);
 
 #if NET6_0_OR_GREATER
-		var span = _buffer.AsSpan(pos);
-		Unsafe.WriteUnaligned<ushort>(ref MemoryMarshal.GetReference<byte>(span), value);
+		ref byte destination = ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(_buffer), pos);
+		Unsafe.WriteUnaligned(ref destination, value);
 #else
-		_buffer[pos + 0] = (byte)value;
-		_buffer[pos + 1] = (byte)(value >> 8);
+		BinaryPrimitives.WriteUInt16LittleEndian(_buffer.AsSpan(pos), value);
 #endif
 	}
 
@@ -321,10 +308,7 @@ public sealed class BinaryBufferWriter : BufferWriterBase
 		var span = _buffer.AsSpan(pos);
 		Unsafe.WriteUnaligned<uint>(ref MemoryMarshal.GetReference<byte>(span), value);
 #else
-		_buffer[pos + 0] = (byte)value;
-		_buffer[pos + 1] = (byte)(value >> 8);
-		_buffer[pos + 2] = (byte)(value >> 16);
-		_buffer[pos + 3] = (byte)(value >> 24);
+		BinaryPrimitives.WriteUInt32LittleEndian(_buffer.AsSpan(pos), value);
 #endif
 	}
 
@@ -341,15 +325,7 @@ public sealed class BinaryBufferWriter : BufferWriterBase
 		ref byte destination = ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(_buffer), pos);
 		Unsafe.WriteUnaligned(ref destination, value);
 #else
-		var buff = _buffer;
-		buff[pos + 0] = (byte)value;
-		buff[pos + 1] = (byte)(value >> 8);
-		buff[pos + 2] = (byte)(value >> 16);
-		buff[pos + 3] = (byte)(value >> 24);
-		buff[pos + 4] = (byte)(value >> 32);
-		buff[pos + 5] = (byte)(value >> 40);
-		buff[pos + 6] = (byte)(value >> 48);
-		buff[pos + 7] = (byte)(value >> 56);
+		BinaryPrimitives.WriteInt64LittleEndian(_buffer.AsSpan(pos), value);
 #endif
 	}
 
@@ -366,15 +342,7 @@ public sealed class BinaryBufferWriter : BufferWriterBase
 		ref byte destination = ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(_buffer), pos);
 		Unsafe.WriteUnaligned(ref destination, value);
 #else
-		var buff = _buffer;
-		buff[pos + 0] = (byte)value;
-		buff[pos + 1] = (byte)(value >> 8);
-		buff[pos + 2] = (byte)(value >> 16);
-		buff[pos + 3] = (byte)(value >> 24);
-		buff[pos + 4] = (byte)(value >> 32);
-		buff[pos + 5] = (byte)(value >> 40);
-		buff[pos + 6] = (byte)(value >> 48);
-		buff[pos + 7] = (byte)(value >> 56);
+		BinaryPrimitives.WriteUInt64LittleEndian(_buffer.AsSpan(pos), value);
 #endif
 	}
 
@@ -433,10 +401,7 @@ public sealed class BinaryBufferWriter : BufferWriterBase
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private void Write(int value, int pos)
 	{
-		_buffer[pos + 0] = (byte)value;
-		_buffer[pos + 1] = (byte)(value >> 8);
-		_buffer[pos + 2] = (byte)(value >> 16);
-		_buffer[pos + 3] = (byte)(value >> 24);
+		BinaryPrimitives.WriteInt32LittleEndian(_buffer.AsSpan(pos), value);
 	}
 #endif
 
@@ -465,7 +430,7 @@ public sealed class BinaryBufferWriter : BufferWriterBase
 		_position = newPos;
 
 		// Fast branchless/simplified tracker update:
-		if (newPos > _writtenLength)
+		if ((uint)newPos > (uint)_writtenLength)
 		{
 			_writtenLength = newPos;
 		}
