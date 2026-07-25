@@ -419,38 +419,40 @@ public sealed class BinaryBufferWriter : BufferWriterBase
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private void AdvanceOne()
 	{
-		var newPos = _position + 1;
+		var newRelativePosition = _relativePositon + 1;
 
-		if ((uint)newPos > (uint)_buffer.Length)
+		if ((uint)newRelativePosition > (uint)_length)
 		{
 			ThrowEndOfDataException();
 		}
 
-		_position = newPos;
+		_relativePositon = newRelativePosition;
+		_position++;
 
-		if ((uint)newPos > (uint)_writtenLength)
+		if ((uint)newRelativePosition > (uint)_writtenLength)
 		{
-			_writtenLength = newPos;
+			_writtenLength = newRelativePosition;
 		}
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private void Advance(int count)
 	{
-		var newPos = _position + count;
+		var newRelativePosition = _relativePositon + count;
 
 		// Fast path: Bound check using unsigned comparison
-		if ((uint)newPos > (uint)_buffer.Length)
+		if ((uint)newRelativePosition > (uint)_length)
 		{
 			ThrowEndOfDataException();
 		}
 
-		_position = newPos;
+		_relativePositon = newRelativePosition;
+		_position += count;
 
 		// Fast branchless/simplified tracker update:
-		if ((uint)newPos > (uint)_writtenLength)
+		if (count > 0 && (uint)newRelativePosition > (uint)_writtenLength)
 		{
-			_writtenLength = newPos;
+			_writtenLength = newRelativePosition;
 		}
 	}
 
@@ -461,7 +463,8 @@ public sealed class BinaryBufferWriter : BufferWriterBase
 	[MethodImpl(MethodImplOptions.NoInlining)]
 	private void ThrowEndOfDataException()
 	{
-		_position = _buffer.Length;
+		_relativePositon = _length;
+		_position = _offset + _length;
 		throw ExceptionHelper.EndOfDataException();
 	}
 }

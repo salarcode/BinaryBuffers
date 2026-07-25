@@ -601,6 +601,30 @@ public class BinaryBufferWriterTests
 		{
 			public override WriterFixtureByteArray CreateFixture() => new WriterFixtureByteArray(1, DefaultDataLength - 1);
 
+			[Fact]
+			public void Writing_a_byte_should_advance_the_relative_position()
+			{
+				Fixture.BufferWriter.Write((byte)1);
+
+				Assert.Equal(1, Fixture.BufferWriter.Position);
+			}
+
+			[Fact]
+			public void Writing_a_byte_should_track_the_segment_relative_written_length()
+			{
+				Fixture.BufferWriter.Write((byte)1);
+
+				Assert.Equal(1, Fixture.BufferWriter.WrittenLength);
+			}
+
+			[Fact]
+			public void Attempting_to_write_past_the_configured_segment_should_throw()
+			{
+				var writer = new BinaryBufferWriter(new byte[8], 2, 1);
+
+				Assert.Throws<EndOfStreamException>(() => writer.Write(new byte[2]));
+			}
+
 			[Theory]
 			[InlineData(0, 0xFF)]
 			[InlineData(1, 0xFF - 1)]
