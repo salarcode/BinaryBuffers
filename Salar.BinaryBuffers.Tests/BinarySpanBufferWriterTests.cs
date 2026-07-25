@@ -216,6 +216,16 @@ public class BinarySpanBufferWriterTests
 			Assert.Equal(input, _fixture.NativeReader.ReadDecimal());
 		}
 
+		[Fact]
+		public void WriteDecimal_should_use_little_endian_wire_format()
+		{
+			var writer = _fixture.CreateWriter();
+
+			writer.Write(123.45m);
+
+			Assert.Equal(new byte[] { 0x39, 0x30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0 }, _fixture.Data[..16]);
+		}
+
 		public void Dispose()
 		{
 			_fixture?.Dispose();

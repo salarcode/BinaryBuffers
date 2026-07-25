@@ -198,6 +198,11 @@ public sealed class BinaryBufferWriter : BufferWriterBase
 #if NET6_0_OR_GREATER
 		ref byte destination = ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(_buffer), pos);
 		decimal.GetBits(value, MemoryMarshal.CreateSpan(ref Unsafe.As<byte, int>(ref destination), 4));
+
+		if (!BitConverter.IsLittleEndian)
+		{
+			ReverseDecimalBitsEndianness(ref destination);
+		}
 #else
 		var bits = decimal.GetBits(value);
 
@@ -402,6 +407,16 @@ public sealed class BinaryBufferWriter : BufferWriterBase
 	private void Write(int value, int pos)
 	{
 		BinaryPrimitives.WriteInt32LittleEndian(_buffer.AsSpan(pos), value);
+	}
+#else
+	[MethodImpl(MethodImplOptions.NoInlining)]
+	private static void ReverseDecimalBitsEndianness(ref byte destination)
+	{
+		var bits = MemoryMarshal.CreateSpan(ref Unsafe.As<byte, int>(ref destination), 4);
+		bits[0] = BinaryPrimitives.ReverseEndianness(bits[0]);
+		bits[1] = BinaryPrimitives.ReverseEndianness(bits[1]);
+		bits[2] = BinaryPrimitives.ReverseEndianness(bits[2]);
+		bits[3] = BinaryPrimitives.ReverseEndianness(bits[3]);
 	}
 #endif
 

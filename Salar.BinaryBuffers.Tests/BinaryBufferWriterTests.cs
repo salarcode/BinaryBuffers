@@ -295,6 +295,14 @@ public class BinaryBufferWriterTests
 			Assert.Equal(input, val);
 		}
 
+		[Fact]
+		public void WriteDecimal_should_use_little_endian_wire_format()
+		{
+			Fixture.BufferWriter.Write(123.45m);
+
+			Assert.Equal(new byte[] { 0x39, 0x30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0 }, Fixture.Data[Fixture.BufferWriter.Offset..(Fixture.BufferWriter.Offset + 16)]);
+		}
+
 		[Theory]
 		[InlineData(0)]
 		[InlineData(0.1)]
