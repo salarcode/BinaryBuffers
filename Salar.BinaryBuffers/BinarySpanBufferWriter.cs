@@ -403,6 +403,8 @@ public ref struct BinarySpanBufferWriter: IBufferWriter
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public void SimulateWrite(int count)
 	{
+		if (count < 0) 
+			throw ExceptionHelper.LengthLessThanZeroException(nameof(count));
 		Advance(count);
 	}
 

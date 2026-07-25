@@ -409,10 +409,12 @@ public sealed class BinaryBufferWriter : BufferWriterBase
 	/// Moves the current position of the writer ahead by the specified number of bytes.
 	/// </summary>
 	/// <param name="count">The number of bytes to advance</param>
-	/// <exception cref="EndOfStreamException"/>
+	/// <exception cref="System.IO.EndOfStreamException"/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public void SimulateWrite(int count)
 	{
+		if (count < 0)
+			throw ExceptionHelper.LengthLessThanZeroException(nameof(count));
 		Advance(count);
 	}
 
