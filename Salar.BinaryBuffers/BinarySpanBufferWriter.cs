@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Buffers.Binary;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 #if NET6_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 #endif
 

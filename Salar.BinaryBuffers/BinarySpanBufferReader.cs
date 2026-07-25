@@ -1,8 +1,10 @@
 using System;
 using System.Buffers.Binary;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+#if NET6_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+#endif
 
 namespace Salar.BinaryBuffers;
 
@@ -25,7 +27,8 @@ public ref struct BinarySpanBufferReader
 	private int _position;
 
 	/// <summary>
-	/// Gets the offset of the span in the original buffer.
+	/// Gets the offset of this reader relative to an original backing buffer.
+	/// For <see cref="BinarySpanBufferReader"/>, this is always <c>0</c>.
 	/// </summary>
 	public int Offset => 0;
 

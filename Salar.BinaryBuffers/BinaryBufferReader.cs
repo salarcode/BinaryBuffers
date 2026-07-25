@@ -226,7 +226,7 @@ public sealed class BinaryBufferReader : BufferReaderBase
 	}
 
 	/// <summary>
-	/// Moves the position by `count` bytes and returns the new byte position.
+	/// Moves the position by <paramref name="count"/> bytes and returns the starting byte index (absolute index into the underlying array).
 	/// </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private int Advance(int count)
