@@ -120,14 +120,6 @@ public ref struct BinarySpanBufferReader
 		var hi = Unsafe.ReadUnaligned<int>(ref Unsafe.Add(ref data, 8));
 		var flags = Unsafe.ReadUnaligned<int>(ref Unsafe.Add(ref data, 12));
 
-		if (!BitConverter.IsLittleEndian)
-		{
-			lo = BinaryPrimitives.ReverseEndianness(lo);
-			mid = BinaryPrimitives.ReverseEndianness(mid);
-			hi = BinaryPrimitives.ReverseEndianness(hi);
-			flags = BinaryPrimitives.ReverseEndianness(flags);
-		}
-
 		try
 		{
 			return new decimal(
