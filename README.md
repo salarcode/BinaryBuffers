@@ -176,29 +176,71 @@ Benchmarks in this repository show substantial improvements for common primitive
 
 Lower is better.
 
+**Int**
+
+| Method                                 | Mean | Error | StdDev | Relative time |
+|----------------------------------------| --- | --- | --- | --- |
+| `BinaryReader_ReadInt` (.NET built-in) | 25.64 ms | 0.2979 ms | 0.2787 ms | baseline |
+| `BufferReader_ReadInt`                 | 3.97 ms | 0.0675 ms | 0.1071 ms | -80% |
+| `SpanBufferReader_ReadInt`             | 5.21 ms | 0.0596 ms | 0.0557 ms | -74% |
+| `StreamBufferReader_ReadInt`           | 17.54 ms | 0.2505 ms | 0.2343 ms | -13% |
+| `BinaryBufferMemoryReader_ReadInt`     | 12.35 ms | 0.1158 ms | 0.1026 ms | -39% |
+| `SequenceBufferReader_ReadInt`         | 39.11 ms | 0.5776 ms | 0.5403 ms | +93% |
+
+**Decimal**
+
 | Method | Mean | Error | StdDev | Relative time |
 | --- | --- | --- | --- | --- |
-| `BinaryReader_ReadInt` | 42.23 ms | 0.1487 ms | 0.1318 ms | 1.00x |
-| `BufferReader_ReadInt` | 5.53 ms | 0.0265 ms | 0.0221 ms | 0.13x |
-| `BinaryReader_ReadDecimal` | 48.28 ms | 0.2038 ms | 0.1906 ms | 1.00x |
-| `BufferReader_ReadDecimal` | 34.75 ms | 0.3921 ms | 0.3476 ms | 0.72x |
-| `BinaryReader_ReadFloat` | 25.76 ms | 0.1012 ms | 0.0947 ms | 1.00x |
-| `BufferReader_ReadFloat` | 3.75 ms | 0.0209 ms | 0.0195 ms | 0.15x |
+| `BinaryReader_ReadDecimal` (.NET built-in) | 20.26 ms | 0.2713 ms | 0.2405 ms | baseline |
+| `BufferReader_ReadDecimal` | 20.51 ms | 0.4102 ms | 0.8470 ms | +1% |
+| `SpanBufferReader_ReadDecimal` | 3.05 ms | 0.0378 ms | 0.0296 ms | -85% |
+| `StreamBufferReader_ReadDecimal` | 24.27 ms | 0.4706 ms | 0.5780 ms | +20% |
+| `BinaryBufferMemoryReader_ReadDecimal` | 23.76 ms | 0.1748 ms | 0.1635 ms | +17% |
+| `SequenceBufferReader_ReadDecimal` | 38.12 ms | 0.1591 ms | 0.1329 ms | +88% |
+
+**Float**
+
+| Method | Mean | Error | StdDev | Relative time |
+| --- | --- | --- | --- | --- |
+| `BinaryReader_ReadFloat` (.NET built-in) | 14.60 ms | 0.1148 ms | 0.1018 ms | baseline |
+| `BufferReader_ReadFloat` | 2.76 ms | 0.0544 ms | 0.0482 ms | -86% |
+| `SpanBufferReader_ReadFloat` | 3.36 ms | 0.0238 ms | 0.0199 ms | -83% |
+| `StreamBufferReader_ReadFloat` | 10.16 ms | 0.0977 ms | 0.0816 ms | -50% |
+| `BinaryBufferMemoryReader_ReadFloat` | 6.45 ms | 0.0704 ms | 0.0624 ms | -68% |
+| `SequenceBufferReader_ReadFloat` | 19.12 ms | 0.3742 ms | 0.3500 ms | -6% |
 
 ### Write benchmarks
 
 Lower is better.
 
+**Int**
+
 | Method | Mean | Error | StdDev | Relative time |
 | --- | --- | --- | --- | --- |
-| `BinaryWriter_WriteInt` | 62.71 ms | 0.5090 ms | 0.4761 ms | 1.00x |
-| `BufferWriter_WriteInt` | 11.05 ms | 0.0307 ms | 0.0240 ms | 0.18x |
-| `BinaryWriter_WriteDecimal` | 42.07 ms | 0.1556 ms | 0.1455 ms | 1.00x |
-| `BufferWriter_WriteDecimal` | 7.79 ms | 0.0191 ms | 0.0169 ms | 0.19x |
-| `BinaryWriter_WriteFloat` | 33.38 ms | 0.1869 ms | 0.1561 ms | 1.00x |
-| `BufferWriter_WriteFloat` | 7.79 ms | 0.0191 ms | 0.0169 ms | 0.23x |
+| `BinaryWriter_WriteInt` (.NET built-in) | 62.53 ms | 1.2336 ms | 2.1279 ms | baseline |
+| `BufferWriter_WriteInt` | 11.60 ms | 0.2227 ms | 0.2383 ms | -43% |
+| `SpanBufferWriter_WriteInt` | 6.74 ms | 0.1292 ms | 0.1680 ms | -67% |
+| `StreamWriter_WriteInt` | 59.54 ms | 1.0247 ms | 0.9585 ms | +194% |
 
-These benchmark results were last recorded with the benchmark project in this repository using .NET 7.0.5 on:
+**Decimal**
+
+| Method | Mean | Error | StdDev | Relative time |
+| --- | --- | --- | --- | --- |
+| `BinaryWriter_WriteDecimal` (.NET built-in) | 40.29 ms | 0.8057 ms | 0.8274 ms | baseline |
+| `BufferWriter_WriteDecimal` | 7.11 ms | 0.1013 ms | 0.0947 ms | -65% |
+| `SpanBufferWriter_WriteDecimal` | 5.49 ms | 0.0622 ms | 0.0611 ms | -73% |
+| `StreamWriter_WriteDecimal` | 33.87 ms | 0.3489 ms | 0.3093 ms | +67% |
+
+**Float**
+
+| Method | Mean | Error | StdDev | Relative time |
+| --- | --- | --- | --- | --- |
+| `BinaryWriter_WriteFloat` (.NET built-in) | 30.67 ms | 0.3490 ms | 0.3094 ms | baseline |
+| `BufferWriter_WriteFloat` | 6.07 ms | 0.1009 ms | 0.1080 ms | -70% |
+| `SpanBufferWriter_WriteFloat` | 3.41 ms | 0.0310 ms | 0.0290 ms | -83% |
+| `StreamWriter_WriteFloat` | 29.58 ms | 0.5377 ms | 0.5029 ms | +46% |
+
+These benchmark results were recorded with the benchmark project in this repository using .NET 10.0 on:
 
 ```text
 AMD Ryzen 9 5900X, 1 CPU, 24 logical and 12 physical cores
