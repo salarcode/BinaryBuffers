@@ -185,6 +185,9 @@ public ref struct BinarySpanBufferReader
 		return Unsafe.ReadUnaligned<short>(ref data);
 	}
 
+	/// <summary>
+	/// Reads a 32-bit signed integer and advances the current position by four bytes.
+	/// </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public int ReadInt32()
 	{
@@ -202,6 +205,9 @@ public ref struct BinarySpanBufferReader
 		return Unsafe.ReadUnaligned<long>(ref data);
 	}
 
+	/// <summary>
+	/// Reads a 16-bit unsigned integer and advances the current position by two bytes.
+	/// </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public ushort ReadUInt16()
 	{
@@ -219,6 +225,9 @@ public ref struct BinarySpanBufferReader
 		return Unsafe.ReadUnaligned<uint>(ref data);
 	}
 
+	/// <summary>
+	/// Reads a 64-bit unsigned integer and advances the current position by eight bytes.
+	/// </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public ulong ReadUInt64()
 	{
@@ -226,6 +235,9 @@ public ref struct BinarySpanBufferReader
 		return Unsafe.ReadUnaligned<ulong>(ref data);
 	}
 
+	/// <summary>
+	/// Reads the specified number of bytes as an array and advances the current position.
+	/// </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public byte[] ReadBytes(int count) => ReadSpan(count).ToArray();
 
