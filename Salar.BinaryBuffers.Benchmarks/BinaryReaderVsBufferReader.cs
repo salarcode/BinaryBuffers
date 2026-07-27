@@ -11,6 +11,7 @@ public abstract class BinaryReaderVsBufferReaderBase
 {
 	protected const int Loops = 5_000_000;
 
+	protected readonly byte[] _buffer;
 	protected readonly MemoryStream _memoryStream;
 	protected readonly BinaryReader _binaryReader;
 	protected readonly BinaryBufferReader _bufferReader;
@@ -20,13 +21,13 @@ public abstract class BinaryReaderVsBufferReaderBase
 
 	protected BinaryReaderVsBufferReaderBase()
 	{
-		var buffer = new byte[1024];
-		_memoryStream = new MemoryStream(buffer);
+		_buffer = new byte[1024];
+		_memoryStream = new MemoryStream(_buffer);
 		_binaryReader = new BinaryReader(_memoryStream);
-		_bufferReader = new BinaryBufferReader(buffer);
+		_bufferReader = new BinaryBufferReader(_buffer);
 		_streamBufferReader = new StreamBufferReader(_memoryStream);
-		_binaryBufferMemoryReader = new BinaryBufferMemoryReader(new ReadOnlyMemory<byte>(buffer));
-		_sequenceBufferReader = new SequenceBufferReader(new ReadOnlySequence<byte>(buffer));
+		_binaryBufferMemoryReader = new BinaryBufferMemoryReader(new ReadOnlyMemory<byte>(_buffer));
+		_sequenceBufferReader = new SequenceBufferReader(new ReadOnlySequence<byte>(_buffer));
 	}
 }
 
@@ -56,6 +57,20 @@ public class ReadPerformanceTest
 
 				_bufferReader.ReadInt32();
 				_bufferReader.ReadInt64();
+			}
+		}
+
+		[Benchmark]
+		public void SpanBufferReader_ReadInt()
+		{
+			var reader = new BinarySpanBufferReader(_buffer);
+
+			for (int i = 0; i < Loops; i++)
+			{
+				reader.Position = 0;
+
+				reader.ReadInt32();
+				reader.ReadInt64();
 			}
 		}
 
@@ -122,6 +137,19 @@ public class ReadPerformanceTest
 		}
 
 		[Benchmark]
+		public void SpanBufferReader_ReadDecimal()
+		{
+			var reader = new BinarySpanBufferReader(_buffer);
+
+			for (int i = 0; i < Loops; i++)
+			{
+				reader.Position = 0;
+
+				reader.ReadDecimal();
+			}
+		}
+
+		[Benchmark]
 		public void StreamBufferReader_ReadDecimal()
 		{
 			for (int i = 0; i < Loops; i++)
@@ -177,6 +205,19 @@ public class ReadPerformanceTest
 				_bufferReader.Position = 0;
 
 				_bufferReader.ReadSingle();
+			}
+		}
+
+		[Benchmark]
+		public void SpanBufferReader_ReadFloat()
+		{
+			var reader = new BinarySpanBufferReader(_buffer);
+
+			for (int i = 0; i < Loops; i++)
+			{
+				reader.Position = 0;
+
+				reader.ReadSingle();
 			}
 		}
 
@@ -245,6 +286,14 @@ public class ReadMemoryTests
 		}
 
 		[Benchmark]
+		public void SpanBufferReader_ReadInt()
+		{
+			var reader = new BinarySpanBufferReader(_buffer);
+			reader.ReadInt32();
+			reader.ReadInt64();
+		}
+
+		[Benchmark]
 		public void StreamBufferReader_ReadInt()
 		{
 			_streamBufferReader.ReadInt32();
@@ -292,6 +341,13 @@ public class ReadMemoryTests
 		}
 
 		[Benchmark]
+		public void SpanBufferReader_ReadDecimal()
+		{
+			var reader = new BinarySpanBufferReader(_buffer);
+			reader.ReadDecimal();
+		}
+
+		[Benchmark]
 		public void StreamBufferReader_ReadDecimal()
 		{
 			_streamBufferReader.ReadDecimal();
@@ -333,6 +389,13 @@ public class ReadMemoryTests
 		public void BufferReader_ReadFloat()
 		{
 			_bufferReader.ReadSingle();
+		}
+
+		[Benchmark]
+		public void SpanBufferReader_ReadFloat()
+		{
+			var reader = new BinarySpanBufferReader(_buffer);
+			reader.ReadSingle();
 		}
 
 		[Benchmark]
