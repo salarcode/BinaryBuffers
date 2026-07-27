@@ -358,7 +358,7 @@ public ref struct BinarySpanBufferWriter: IBufferWriter
 		var length = buffer.Length;
 		Advance(length);
 
-		// Slice(pos) was 31-145% slower and produced larger code in .NET 10 benchmarks.
+		// Slice(pos, length) performed better than Slice(pos) in .NET 10 benchmarks (31–145% faster) and produced smaller code.
 		buffer.CopyTo(_buffer.Slice(pos, length));
 	}
 
