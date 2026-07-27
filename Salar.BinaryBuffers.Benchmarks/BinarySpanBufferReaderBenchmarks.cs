@@ -7,7 +7,7 @@ using Microsoft.VSDiagnostics;
 
 namespace Salar.BinaryBuffers.Benchmarks;
 [DisassemblyDiagnoser(maxDepth: 3, printSource: true, exportCombinedDisassemblyReport: true)]
-[SimpleJob(RuntimeMoniker.Net90, launchCount: 1, warmupCount: 3, iterationCount: 8)]
+// NO NEED! [SimpleJob(RuntimeMoniker.Net90, launchCount: 1, warmupCount: 3, iterationCount: 8)]
 [SimpleJob(RuntimeMoniker.Net10_0, launchCount: 1, warmupCount: 3, iterationCount: 8)]
 [CPUUsageDiagnoser]
 public class BinarySpanBufferReaderPrimitiveBenchmarks
@@ -57,78 +57,73 @@ public class BinarySpanBufferReaderPrimitiveBenchmarks
         public short ReadInt16()
         {
             var position = Advance(sizeof(short));
-            ref byte source = ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), position);
-            return Unsafe.ReadUnaligned<short>(ref source);
+            return Unsafe.ReadUnaligned<short>(ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), position));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ushort ReadUInt16()
         {
             var position = Advance(sizeof(ushort));
-            ref byte source = ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), position);
-            return Unsafe.ReadUnaligned<ushort>(ref source);
+            return Unsafe.ReadUnaligned<ushort>(ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), position));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int ReadInt32()
         {
             var position = Advance(sizeof(int));
-            ref byte source = ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), position);
-            return Unsafe.ReadUnaligned<int>(ref source);
+            return Unsafe.ReadUnaligned<int>(ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), position));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public uint ReadUInt32()
         {
             var position = Advance(sizeof(uint));
-            ref byte source = ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), position);
-            return Unsafe.ReadUnaligned<uint>(ref source);
+            return Unsafe.ReadUnaligned<uint>(ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), position));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public long ReadInt64()
         {
             var position = Advance(sizeof(long));
-            ref byte source = ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), position);
-            return Unsafe.ReadUnaligned<long>(ref source);
+            return Unsafe.ReadUnaligned<long>(ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), position));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ulong ReadUInt64()
         {
             var position = Advance(sizeof(ulong));
-            ref byte source = ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), position);
-            return Unsafe.ReadUnaligned<ulong>(ref source);
+            return Unsafe.ReadUnaligned<ulong>(ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), position));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public float ReadSingle()
         {
             var position = Advance(sizeof(float));
-            ref byte source = ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), position);
-            return Unsafe.ReadUnaligned<float>(ref source);
+            return Unsafe.ReadUnaligned<float>(ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), position));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public double ReadDouble()
         {
             var position = Advance(sizeof(double));
-            ref byte source = ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), position);
-            return Unsafe.ReadUnaligned<double>(ref source);
+            return Unsafe.ReadUnaligned<double>(ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), position));
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private int Advance(int count)
-        {
-            var position = _position;
-            var newPosition = position + count;
-            if ((uint)newPosition > (uint)_buffer.Length)
-                ThrowEndOfDataException();
-            _position = newPosition;
-            return position;
-        }
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private int Advance(int count)
+		{
+			var position = _position;
+			var newPosition = position + count;
+			if ((uint)newPosition > (uint)_buffer.Length)
+			{
+				ThrowEndOfDataException();
+			}
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
+			_position = newPosition;
+			return position;
+		}
+
+		[MethodImpl(MethodImplOptions.NoInlining)]
         private void ThrowEndOfDataException() => throw new InvalidOperationException();
     }
 }

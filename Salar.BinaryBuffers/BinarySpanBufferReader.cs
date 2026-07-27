@@ -139,49 +139,81 @@ public ref struct BinarySpanBufferReader
 	/// Reads a single-precision floating-point number and advances the current position by four bytes.
 	/// </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public float ReadSingle() => ReadUnaligned<float>(4);
+	public float ReadSingle()
+	{
+		var position = Advance(sizeof(float));
+		return Unsafe.ReadUnaligned<float>(ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), position));
+	}
 
 	/// <summary>
 	/// Reads a double-precision floating-point number and advances the current position by eight bytes.
 	/// </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public double ReadDouble() => ReadUnaligned<double>(8);
+	public double ReadDouble()
+	{
+		var position = Advance(sizeof(double));
+		return Unsafe.ReadUnaligned<double>(ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), position));
+	}
 
 	/// <summary>
 	/// Reads a 16-bit signed integer and advances the current position by two bytes.
 	/// </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public short ReadInt16() => ReadUnaligned<short>(2);
+	public short ReadInt16()
+	{
+		var position = Advance(sizeof(short));
+		return Unsafe.ReadUnaligned<short>(ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), position));
+	}
 
 	/// <summary>
 	/// Reads a 32-bit signed integer and advances the current position by four bytes.
 	/// </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public int ReadInt32() => ReadUnaligned<int>(4);
+	public int ReadInt32()
+	{
+		var position = Advance(sizeof(int));
+		return Unsafe.ReadUnaligned<int>(ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), position));
+	}
 
 	/// <summary>
 	/// Reads a 64-bit signed integer and advances the current position by eight bytes.
 	/// </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public long ReadInt64() => ReadUnaligned<long>(8);
+	public long ReadInt64()
+	{
+		var position = Advance(sizeof(long));
+		return Unsafe.ReadUnaligned<long>(ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), position));
+	}
 
 	/// <summary>
 	/// Reads a 16-bit unsigned integer and advances the current position by two bytes.
 	/// </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public ushort ReadUInt16() => ReadUnaligned<ushort>(2);
+	public ushort ReadUInt16()
+	{
+		var position = Advance(sizeof(ushort));
+		return Unsafe.ReadUnaligned<ushort>(ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), position));
+	}
 
 	/// <summary>
 	/// Reads a 32-bit unsigned integer and advances the current position by four bytes.
 	/// </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public uint ReadUInt32() => ReadUnaligned<uint>(4);
+	public uint ReadUInt32()
+	{
+		var position = Advance(sizeof(uint));
+		return Unsafe.ReadUnaligned<uint>(ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), position));
+	}
 
 	/// <summary>
 	/// Reads a 64-bit unsigned integer and advances the current position by eight bytes.
 	/// </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public ulong ReadUInt64() => ReadUnaligned<ulong>(8);
+	public ulong ReadUInt64()
+	{
+		var position = Advance(sizeof(ulong));
+		return Unsafe.ReadUnaligned<ulong>(ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), position));
+	}
 
 	/// <summary>
 	/// Reads the specified number of bytes into a new byte array and advances the current position.
@@ -225,14 +257,6 @@ public ref struct BinarySpanBufferReader
 
 		ReadSpan(count).CopyTo(buffer.AsSpan(index, count));
 		return count;
-	}
-
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private T ReadUnaligned<T>(int size) where T : unmanaged
-	{
-		var position = Advance(size);
-		ref byte source = ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), position);
-		return Unsafe.ReadUnaligned<T>(ref source);
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
