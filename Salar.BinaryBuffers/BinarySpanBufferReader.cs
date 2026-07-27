@@ -23,7 +23,14 @@ namespace Salar.BinaryBuffers;
 /// </remarks>
 public ref struct BinarySpanBufferReader
 {
+#if NET7_0_OR_GREATER
+	// Ref-readonly byte allows reading bytes safely without mutating them,
+	// while letting ResetBuffer rebind _bufferHead to a new buffer.
+	private ref readonly byte _bufferHead;
+	private int _length;
+#else
 	private ReadOnlySpan<byte> _buffer;
+#endif
 	private int _position;
 
 	/// <summary>
@@ -35,7 +42,12 @@ public ref struct BinarySpanBufferReader
 	/// <summary>
 	/// Gets the length of the readable span.
 	/// </summary>
-	public int Length => _buffer.Length;
+	public int Length =>
+#if NET7_0_OR_GREATER
+		_length;
+#else
+		_buffer.Length;
+#endif
 
 	/// <summary>
 	/// Gets or sets the current reading position within the span.
@@ -46,7 +58,7 @@ public ref struct BinarySpanBufferReader
 		set
 		{
 			if (value < 0) throw ExceptionHelper.PositionLessThanZeroException(nameof(value));
-			if (value > _buffer.Length) throw ExceptionHelper.PositionGreaterThanLengthOfByteArrayException(nameof(value));
+			if (value > Length) throw ExceptionHelper.PositionGreaterThanLengthOfByteArrayException(nameof(value));
 
 			_position = value;
 		}
@@ -55,7 +67,7 @@ public ref struct BinarySpanBufferReader
 	/// <summary>
 	/// Gets the number of bytes remaining in the span.
 	/// </summary>
-	public int Remaining => _buffer.Length - _position;
+	public int Remaining => Length - _position;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="BinarySpanBufferReader"/> struct using the specified byte span.
@@ -63,7 +75,12 @@ public ref struct BinarySpanBufferReader
 	/// <param name="buffer">The byte span to read.</param>
 	public BinarySpanBufferReader(ReadOnlySpan<byte> buffer)
 	{
+#if NET7_0_OR_GREATER
+		_bufferHead = ref MemoryMarshal.GetReference(buffer);
+		_length = buffer.Length;
+#else
 		_buffer = buffer;
+#endif
 		_position = 0;
 	}
 
@@ -73,7 +90,12 @@ public ref struct BinarySpanBufferReader
 	/// <param name="buffer">The byte span to read.</param>
 	public void ResetBuffer(ReadOnlySpan<byte> buffer)
 	{
+#if NET7_0_OR_GREATER
+		_bufferHead = ref MemoryMarshal.GetReference(buffer);
+		_length = buffer.Length;
+#else
 		_buffer = buffer;
+#endif
 		_position = 0;
 	}
 
@@ -97,9 +119,8 @@ public ref struct BinarySpanBufferReader
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public byte ReadByte()
 	{
-		var position = _position;
-		AdvanceOne();
-		return _buffer[position];
+		ref byte data = ref AdvanceAsRef(1);
+		return data;
 	}
 
 	/// <summary>
@@ -111,10 +132,13 @@ public ref struct BinarySpanBufferReader
 	/// <summary>
 	/// Reads a decimal value and advances the current position by sixteen bytes.
 	/// </summary>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public decimal ReadDecimal()
 	{
-		var span = AdvanceAsSpan(16);
-		ref byte data = ref MemoryMarshal.GetReference(span);
+		ref byte data = ref AdvanceAsRef(16);
+#if NET6_0_OR_GREATER
+		return Unsafe.ReadUnaligned<decimal>(ref data);
+#else
 		var lo = Unsafe.ReadUnaligned<int>(ref data);
 		var mid = Unsafe.ReadUnaligned<int>(ref Unsafe.Add(ref data, 4));
 		var hi = Unsafe.ReadUnaligned<int>(ref Unsafe.Add(ref data, 8));
@@ -122,17 +146,13 @@ public ref struct BinarySpanBufferReader
 
 		try
 		{
-			return new decimal(
-#if NET6_0_OR_GREATER
-				stackalloc[] { lo, mid, hi, flags });
-#else
-				[lo, mid, hi, flags]);
-#endif
+			return new decimal([lo, mid, hi, flags]);
 		}
 		catch (ArgumentException exception)
 		{
 			throw ExceptionHelper.DecimalReadingException(exception);
 		}
+#endif
 	}
 
 	/// <summary>
@@ -141,8 +161,8 @@ public ref struct BinarySpanBufferReader
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public float ReadSingle()
 	{
-		var span = AdvanceAsSpan(sizeof(float));
-		return Unsafe.As<byte, float>(ref MemoryMarshal.GetReference(span));
+		ref byte data = ref AdvanceAsRef(4);
+		return Unsafe.ReadUnaligned<float>(ref data);
 	}
 
 	/// <summary>
@@ -151,8 +171,8 @@ public ref struct BinarySpanBufferReader
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public double ReadDouble()
 	{
-		var span = AdvanceAsSpan(sizeof(double));
-		return Unsafe.As<byte, double>(ref MemoryMarshal.GetReference(span));
+		ref byte data = ref AdvanceAsRef(8);
+		return Unsafe.ReadUnaligned<double>(ref data);
 	}
 
 	/// <summary>
@@ -161,18 +181,15 @@ public ref struct BinarySpanBufferReader
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public short ReadInt16()
 	{
-		var span = AdvanceAsSpan(sizeof(short));
-		return Unsafe.As<byte, short>(ref MemoryMarshal.GetReference(span));
+		ref byte data = ref AdvanceAsRef(2);
+		return Unsafe.ReadUnaligned<short>(ref data);
 	}
 
-	/// <summary>
-	/// Reads a 32-bit signed integer and advances the current position by four bytes.
-	/// </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public int ReadInt32()
 	{
-		var span = AdvanceAsSpan(sizeof(int));
-		return Unsafe.As<byte, int>(ref MemoryMarshal.GetReference(span));
+		ref byte data = ref AdvanceAsRef(4);
+		return Unsafe.ReadUnaligned<int>(ref data);
 	}
 
 	/// <summary>
@@ -181,18 +198,15 @@ public ref struct BinarySpanBufferReader
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public long ReadInt64()
 	{
-		var span = AdvanceAsSpan(sizeof(long));
-		return Unsafe.As<byte, long>(ref MemoryMarshal.GetReference(span));
+		ref byte data = ref AdvanceAsRef(8);
+		return Unsafe.ReadUnaligned<long>(ref data);
 	}
 
-	/// <summary>
-	/// Reads a 16-bit unsigned integer and advances the current position by two bytes.
-	/// </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public ushort ReadUInt16()
 	{
-		var span = AdvanceAsSpan(sizeof(ushort));
-		return Unsafe.As<byte, ushort>(ref MemoryMarshal.GetReference(span));
+		ref byte data = ref AdvanceAsRef(2);
+		return Unsafe.ReadUnaligned<ushort>(ref data);
 	}
 
 	/// <summary>
@@ -201,24 +215,17 @@ public ref struct BinarySpanBufferReader
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public uint ReadUInt32()
 	{
-		var span = AdvanceAsSpan(sizeof(uint));
-		return Unsafe.As<byte, uint>(ref MemoryMarshal.GetReference(span));
+		ref byte data = ref AdvanceAsRef(4);
+		return Unsafe.ReadUnaligned<uint>(ref data);
 	}
 
-	/// <summary>
-	/// Reads a 64-bit unsigned integer and advances the current position by eight bytes.
-	/// </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public ulong ReadUInt64()
 	{
-		var span = AdvanceAsSpan(sizeof(ulong));
-		return Unsafe.As<byte, ulong>(ref MemoryMarshal.GetReference(span));
+		ref byte data = ref AdvanceAsRef(8);
+		return Unsafe.ReadUnaligned<ulong>(ref data);
 	}
 
-	/// <summary>
-	/// Reads the specified number of bytes into a new byte array and advances the current position.
-	/// </summary>
-	/// <param name="count">The number of bytes to read.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public byte[] ReadBytes(int count) => ReadSpan(count).ToArray();
 
@@ -247,7 +254,7 @@ public ref struct BinarySpanBufferReader
 		if (count <= 0)
 			return 0;
 
-		var remaining = _buffer.Length - _position;
+		var remaining = Length - _position;
 		if (count > remaining)
 			count = remaining;
 
@@ -258,30 +265,40 @@ public ref struct BinarySpanBufferReader
 		return count;
 	}
 
+	/// <summary>
+	/// Low-level helper that advances position and returns a reference to the start of the read region.
+	/// Eliminates Span struct creation overhead on primitive reads.
+	/// </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private void AdvanceOne()
+	private ref byte AdvanceAsRef(int count)
 	{
-		var newPosition = _position + 1;
-		if ((uint)newPosition > (uint)_buffer.Length)
+		int position = _position;
+		int newPosition = position + count;
+
+		if ((uint)newPosition > (uint)Length)
 		{
 			ThrowEndOfDataException();
 		}
 
 		_position = newPosition;
+
+#if NET7_0_OR_GREATER
+		return ref Unsafe.Add(ref Unsafe.AsRef(in _bufferHead), position);
+#else
+		return ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), position);
+#endif
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private ReadOnlySpan<byte> AdvanceAsSpan(int count)
 	{
-		var position = _position;
-		var newPosition = position + count;
-		if ((uint)newPosition > (uint)_buffer.Length)
-		{
-			ThrowEndOfDataException();
-		}
+		ref byte data = ref AdvanceAsRef(count);
 
-		_position = newPosition;
-		return _buffer.Slice(position, count);
+#if NET6_0_OR_GREATER
+		return MemoryMarshal.CreateReadOnlySpan(ref data, count);
+#else
+		return _buffer.Slice(_position - count, count);
+#endif
 	}
 
 #if NET6_0_OR_GREATER
@@ -290,7 +307,7 @@ public ref struct BinarySpanBufferReader
 	[MethodImpl(MethodImplOptions.NoInlining)]
 	private void ThrowEndOfDataException()
 	{
-		_position = _buffer.Length;
+		_position = Length;
 		throw ExceptionHelper.EndOfDataException();
 	}
 }
