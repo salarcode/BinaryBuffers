@@ -13,7 +13,6 @@ public sealed class BinaryBufferReader : BufferReaderBase
 	private int _length;
 	private int _offset;
 	private int _relativePosition;
-	private int _position;
 
 	/// <summary>
 	/// Gets the offset into the underlying byte array to start reading from.
@@ -33,13 +32,10 @@ public sealed class BinaryBufferReader : BufferReaderBase
 		get => _relativePosition;
 		set
 		{
-			var newPosition = _offset + value;
-
 			if (value < 0) throw ExceptionHelper.PositionLessThanZeroException(nameof(value));
 			if (value > _length) throw ExceptionHelper.PositionGreaterThanLengthOfByteArrayException(nameof(value));
 
 			_relativePosition = value;
-			_position = newPosition;
 		}
 	}
 
@@ -86,7 +82,6 @@ public sealed class BinaryBufferReader : BufferReaderBase
 	public void ResetBuffer(byte[] data)
 	{
 		_data = data ?? throw new ArgumentNullException(nameof(data));
-		_position = 0;
 		_relativePosition = 0;
 		_offset = 0;
 		_length = data.Length;
@@ -109,7 +104,6 @@ public sealed class BinaryBufferReader : BufferReaderBase
 		if (length < 0) throw ExceptionHelper.LengthLessThanZeroException(nameof(length));
 		if (length > _data.Length - offset) throw ExceptionHelper.LengthGreaterThanEffectiveLengthOfByteArrayException();
 
-		_position = offset;
 		_relativePosition = 0;
 		_offset = offset;
 		_length = length;
@@ -122,7 +116,6 @@ public sealed class BinaryBufferReader : BufferReaderBase
 	public void ResetBuffer(in ArraySegment<byte> data)
 	{
 		_data = data.Array ?? throw new ArgumentNullException(nameof(data));
-		_position = data.Offset;
 		_relativePosition = 0;
 		_offset = data.Offset;
 		_length = data.Count;
@@ -215,91 +208,87 @@ public sealed class BinaryBufferReader : BufferReaderBase
 	/// <summary>
 	/// Reads the next byte from the underlying byte array and advances the current position by one byte.
 	/// </summary>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected override byte InternalReadByte()
 	{
-		int curPos = _position;
-		int newPos = curPos + 1;
-		int relPos = _relativePosition + 1;
+		int relativePosition = _relativePosition;
+		int newRelativePosition = relativePosition + 1;
 
-		if (unchecked((uint)relPos > (uint)_length))
+		if (unchecked((uint)newRelativePosition > (uint)_length))
 		{
 			_relativePosition = _length;
 			throw ExceptionHelper.EndOfDataException();
 		}
 
-		_relativePosition = relPos;
-		_position = newPos;
+		_relativePosition = newRelativePosition;
 
-		return _data[curPos];
+		return _data[_offset + relativePosition];
 	}
 
 	/// <summary>
-	/// Moves the position by `count` bytes and returns the new byte position.
+	/// Moves the position by <paramref name="count"/> bytes and returns the starting byte index (absolute index into the underlying array).
 	/// </summary>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private int Advance(int count)
 	{
 		if (count <= 0)
-			return _position;
+			return _offset + _relativePosition;
 
-		int curPos = _position;
-		int newPos = curPos + count;
-		int relPos = _relativePosition + count;
+		int relativePosition = _relativePosition;
+		int newRelativePosition = relativePosition + count;
 
-		if (unchecked((uint)relPos > (uint)_length))
+		if (unchecked((uint)newRelativePosition > (uint)_length))
 		{
 			_relativePosition = _length;
 			throw ExceptionHelper.EndOfDataException();
 		}
 
-		_relativePosition = relPos;
-		_position = newPos;
+		_relativePosition = newRelativePosition;
 
-		return curPos;
+		return _offset + relativePosition;
 	}
 
 	/// <summary>
 	/// Returns a read-only span over the specified number of bytes from the underlying byte array and advances the current position by that number of bytes.
 	/// </summary>
 	/// <param name="count">The size of the read-only span to return.</param>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected override ReadOnlySpan<byte> InternalReadSpan(int count)
 	{
 		if (count <= 0)
 			return ReadOnlySpan<byte>.Empty;
 
-		int curPos = _position;
-		int newPos = curPos + count;
-		int relPos = _relativePosition + count;
+		int relativePosition = _relativePosition;
+		int newRelativePosition = relativePosition + count;
 
-		if (unchecked((uint)relPos > (uint)_length))
+		if (unchecked((uint)newRelativePosition > (uint)_length))
 		{
 			_relativePosition = _length;
 			throw ExceptionHelper.EndOfDataException();
 		}
 
-		_relativePosition = relPos;
-		_position = newPos;
+		_relativePosition = newRelativePosition;
 
-		return new ReadOnlySpan<byte>(_data, curPos, count);
+		return new ReadOnlySpan<byte>(_data, _offset + relativePosition, count);
 	}
 
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public override ReadOnlyMemory<byte> ReadMemory(int count)
 	{
 		if (count <= 0)
 			return ReadOnlyMemory<byte>.Empty;
 
-		int curPos = _position;
-		int newPos = curPos + count;
-		int relPos = _relativePosition + count;
+		int relativePosition = _relativePosition;
+		int newRelativePosition = relativePosition + count;
 
-		if (unchecked((uint)relPos > (uint)_length))
+		if (unchecked((uint)newRelativePosition > (uint)_length))
 		{
 			_relativePosition = _length;
 			throw ExceptionHelper.EndOfDataException();
 		}
 
-		_relativePosition = relPos;
-		_position = newPos;
+		_relativePosition = newRelativePosition;
 
-		return new ReadOnlyMemory<byte>(_data, curPos, count);
+		return new ReadOnlyMemory<byte>(_data, _offset + relativePosition, count);
 	}
 }

@@ -9,7 +9,7 @@ namespace Salar.BinaryBuffers.Compatibility;
 /// <summary>
 /// Provides a writer for writing primitive data types to a stream of bytes.
 /// </summary>
-public class StreamBufferWriter : BufferWriterBase
+public sealed class StreamBufferWriter : BufferWriterBase
 {
 	private readonly Stream _stream;
 
@@ -73,6 +73,7 @@ public class StreamBufferWriter : BufferWriterBase
 		_stream.Write(buffer, offset, length);
 	}
 
+	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public void Write(in ArraySegment<byte> buffer)
 	{
@@ -80,6 +81,7 @@ public class StreamBufferWriter : BufferWriterBase
 	}
 
 	/// <inheritdoc/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public override void Write(decimal value)
 	{
 #if NET6_0_OR_GREATER
@@ -98,6 +100,7 @@ public class StreamBufferWriter : BufferWriterBase
 	}
 
 	/// <inheritdoc/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public override void Write(double value)
 	{
 #if NET6_0_OR_GREATER
@@ -112,6 +115,7 @@ public class StreamBufferWriter : BufferWriterBase
 	}
 
 	/// <inheritdoc/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public override void Write(float value)
 	{
 #if NET6_0_OR_GREATER
@@ -126,6 +130,7 @@ public class StreamBufferWriter : BufferWriterBase
 	}
 
 	/// <inheritdoc/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public override void Write(short value)
 	{
 #if NET6_0_OR_GREATER
@@ -140,6 +145,7 @@ public class StreamBufferWriter : BufferWriterBase
 	}
 
 	/// <inheritdoc/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public override void Write(ushort value)
 	{
 #if NET6_0_OR_GREATER
@@ -154,6 +160,7 @@ public class StreamBufferWriter : BufferWriterBase
 	}
 
 	/// <inheritdoc/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public override void Write(int value)
 	{
 #if NET6_0_OR_GREATER
@@ -168,6 +175,7 @@ public class StreamBufferWriter : BufferWriterBase
 	}
 
 	/// <inheritdoc/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public override void Write(uint value)
 	{
 #if NET6_0_OR_GREATER
@@ -182,6 +190,7 @@ public class StreamBufferWriter : BufferWriterBase
 	}
 
 	/// <inheritdoc/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public override void Write(long value)
 	{
 #if NET6_0_OR_GREATER
@@ -196,6 +205,7 @@ public class StreamBufferWriter : BufferWriterBase
 	}
 
 	/// <inheritdoc/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public override void Write(ulong value)
 	{
 #if NET6_0_OR_GREATER
@@ -210,6 +220,7 @@ public class StreamBufferWriter : BufferWriterBase
 	}
 
 	/// <inheritdoc/>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public override void Write(ReadOnlySpan<byte> buffer)
 	{
 #if NET6_0_OR_GREATER

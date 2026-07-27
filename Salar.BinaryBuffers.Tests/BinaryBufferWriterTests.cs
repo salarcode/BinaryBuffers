@@ -295,6 +295,14 @@ public class BinaryBufferWriterTests
 			Assert.Equal(input, val);
 		}
 
+		[Fact]
+		public void WriteDecimal_should_use_little_endian_wire_format()
+		{
+			Fixture.BufferWriter.Write(123.45m);
+
+			Assert.Equal(new byte[] { 0x39, 0x30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0 }, Fixture.Data[Fixture.BufferWriter.Offset..(Fixture.BufferWriter.Offset + 16)]);
+		}
+
 		[Theory]
 		[InlineData(0)]
 		[InlineData(0.1)]
@@ -600,6 +608,30 @@ public class BinaryBufferWriterTests
 		public class ByteArrayWithOffsetAndLength : Writing<WriterFixtureByteArray>
 		{
 			public override WriterFixtureByteArray CreateFixture() => new WriterFixtureByteArray(1, DefaultDataLength - 1);
+
+			[Fact]
+			public void Writing_a_byte_should_advance_the_relative_position()
+			{
+				Fixture.BufferWriter.Write((byte)1);
+
+				Assert.Equal(1, Fixture.BufferWriter.Position);
+			}
+
+			[Fact]
+			public void Writing_a_byte_should_track_the_segment_relative_written_length()
+			{
+				Fixture.BufferWriter.Write((byte)1);
+
+				Assert.Equal(1, Fixture.BufferWriter.WrittenLength);
+			}
+
+			[Fact]
+			public void Attempting_to_write_past_the_configured_segment_should_throw()
+			{
+				var writer = new BinaryBufferWriter(new byte[8], 2, 1);
+
+				Assert.Throws<EndOfStreamException>(() => writer.Write(new byte[2]));
+			}
 
 			[Theory]
 			[InlineData(0, 0xFF)]

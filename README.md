@@ -124,6 +124,10 @@ BinaryBuffers is a good fit when you:
 - need predictable, low-allocation binary serialization of primitive values
 - want to reuse the same buffer across repeated operations
 
+**Compatibility**
+
+BinaryBuffers does not support cross-endian binary data exchange.
+
 ## Benchmarks
 
 Benchmarks in this repository show substantial improvements for common primitive reads and writes when compared to `BinaryReader` and `BinaryWriter`.

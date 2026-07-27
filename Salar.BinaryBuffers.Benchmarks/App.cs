@@ -6,8 +6,14 @@ namespace Salar.BinaryBuffers.Benchmarks;
 
 public static class App
 {
-	public static void Main()
+	public static void Main(string[] args)
 	{
+		if (args.Length > 0)
+		{
+			BenchmarkSwitcher.FromAssembly(typeof(App).Assembly).Run(args);
+			return;
+		}
+
 		Console.WriteLine("Welcome to BinaryBuffers benchmark!");
 #if DEBUG
 		Console.WriteLine("**********************************************");		
@@ -15,46 +21,57 @@ public static class App
 		Console.WriteLine("**********************************************");		
 #endif
 		var choice = Menu();
-		if (choice.KeyChar == '0')
-		{
-			BenchmarkSwitcher.FromAssembly(typeof(App).Assembly).RunAllJoined(config: new PerformanceConfig());
-		}
-		if (choice.KeyChar == '1')
-		{
-			BenchmarkSwitcher.FromTypes(new[] {
-				typeof(ReadPerformanceTest.BinaryReaderVsBufferReader_Int),
-				typeof(ReadPerformanceTest.BinaryReaderVsBufferReader_Float),
-				typeof(ReadPerformanceTest.BinaryReaderVsBufferReader_Decimal),
-
-				typeof(WritePerformanceTest.BinaryWriterVsBufferWriter_Int),
-				typeof(WritePerformanceTest.BinaryWriterVsBufferWriter_Float),
-				typeof(WritePerformanceTest.BinaryWriterVsBufferWriter_Decimal)
-			}).RunAllJoined(config: new PerformanceConfig());
-		}
-		if (choice.KeyChar == '2')
-		{
-			BenchmarkSwitcher.FromTypes(new[] {
-				typeof(ReadMemoryTests.BinaryReaderVsBufferReader_Int),
-				typeof(ReadMemoryTests.BinaryReaderVsBufferReader_Float),
-				typeof(ReadMemoryTests.BinaryReaderVsBufferReader_Decimal),
-
-				typeof(WriteMemoryTest.BinaryWriterVsBufferWriter_Int),
-				typeof(WriteMemoryTest.BinaryWriterVsBufferWriter_Float),
-				typeof(WriteMemoryTest.BinaryWriterVsBufferWriter_Decimal)
-			}).RunAllJoined(config: new PerformanceConfig());
-		}
-		else if (choice.KeyChar == '3')
-		{
-			BenchmarkSwitcher.FromAssembly(typeof(App).Assembly).Run(config: new PerformanceConfig());
-		}
-		else if (choice.Key == ConsoleKey.Q)
+		if (choice.Key == ConsoleKey.Q)
 		{
 			return;
 		}
-		else
+		if (choice.KeyChar is < '0' or > '3')
 		{
 			Console.WriteLine("Invalid choice!");
+			return;
 		}
+
+		var config = new PerformanceConfig(PromptIterationCount());
+		switch (choice.KeyChar)
+		{
+			case '0':
+				BenchmarkSwitcher.FromAssembly(typeof(App).Assembly).RunAllJoined(config: config);
+				break;
+			case '1':
+				BenchmarkSwitcher.FromTypes(new[] {
+					typeof(ReadPerformanceTest.BinaryReaderVsBufferReader_Int),
+					typeof(ReadPerformanceTest.BinaryReaderVsBufferReader_Float),
+					typeof(ReadPerformanceTest.BinaryReaderVsBufferReader_Decimal),
+
+					typeof(WritePerformanceTest.BinaryWriterVsBufferWriter_Int),
+					typeof(WritePerformanceTest.BinaryWriterVsBufferWriter_Float),
+					typeof(WritePerformanceTest.BinaryWriterVsBufferWriter_Decimal)
+				}).RunAllJoined(config: config);
+				break;
+			case '2':
+				BenchmarkSwitcher.FromTypes(new[] {
+					typeof(ReadMemoryTests.MemoryBinaryReaderVsBufferReader_Int),
+					typeof(ReadMemoryTests.MemoryBinaryReaderVsBufferReader_Float),
+					typeof(ReadMemoryTests.MemoryBinaryReaderVsBufferReader_Decimal),
+
+					typeof(WriteMemoryTest.MemoryTestBinaryWriterVsBufferWriter_Int),
+					typeof(WriteMemoryTest.MemoryTestBinaryWriterVsBufferWriter_Float),
+					typeof(WriteMemoryTest.MemoryTestBinaryWriterVsBufferWriter_Decimal)
+				}).RunAllJoined(config: config);
+				break;
+			case '3':
+				BenchmarkSwitcher.FromAssembly(typeof(App).Assembly).Run(config: config);
+				break;
+		}
+	}
+
+	static int? PromptIterationCount()
+	{
+		Console.Write("Number of runs (press Enter to use the default): ");
+		var input = Console.ReadLine();
+		return int.TryParse(input, out var iterationCount) && iterationCount > 0
+			? iterationCount
+			: null;
 	}
 
 	static ConsoleKeyInfo Menu()

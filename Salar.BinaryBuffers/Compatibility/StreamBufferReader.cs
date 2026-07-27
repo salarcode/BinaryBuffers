@@ -10,7 +10,7 @@ namespace Salar.BinaryBuffers.Compatibility;
 /// Normally you should not use this instead of <see cref="BinaryReader"/> but use this for widen support of <see cref="IBufferReader"/>.
 /// This has similar performance to the <see cref="BinaryReader"/>.
 /// </summary>
-public class StreamBufferReader : BufferReaderBase, IDisposable
+public sealed class StreamBufferReader : BufferReaderBase, IDisposable
 {
 	private delegate ReadOnlySpan<byte> MemoryStreamInternalReadSpan(int count);
 
@@ -74,6 +74,7 @@ public class StreamBufferReader : BufferReaderBase, IDisposable
 		return InternalReadNewBytes(count);
 	}
 
+	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected override byte InternalReadByte()
 	{
@@ -84,22 +85,29 @@ public class StreamBufferReader : BufferReaderBase, IDisposable
 		return _buffer[0];
 	}
 
+	/// <inheritdoc/>
 	protected override ReadOnlySpan<byte> InternalReadSpan(int count)
 	{
 		if (_memoryStreamInternalReadSpan != null)
 		{
 			return _memoryStreamInternalReadSpan(count);
 		}
+
+		if (_buffer.Length < count)
+		{
+			_buffer = new byte[count];
+		}
+
 		int offset = 0;
 		do
 		{
 			int num = _stream.Read(_buffer, offset, count - offset);
 			if (num == 0)
-				throw new EndOfStreamException("Reached to end of data");
+				throw ExceptionHelper.EndOfDataException();
 			offset += num;
 		}
 		while (offset < count);
-		return (ReadOnlySpan<byte>)_buffer;
+		return _buffer.AsSpan(0, count);
 	}
 
 #if NET6_0_OR_GREATER
@@ -112,13 +120,14 @@ public class StreamBufferReader : BufferReaderBase, IDisposable
 			// This is 1.5 times faster than calling the `Read` method below
 			return _memoryStreamInternalReadSpan(count).ToArray();
 		}
+
 		var buffer = new byte[count];
 		int offset = 0;
 		do
 		{
 			int num = _stream.Read(buffer, offset, count - offset);
 			if (num == 0)
-				throw new EndOfStreamException("Reached to end of data");
+				throw ExceptionHelper.EndOfDataException();
 			offset += num;
 		}
 		while (offset < count);
