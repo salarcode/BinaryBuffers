@@ -8,7 +8,8 @@ BinaryBuffers is a high-performance .NET library for reading and writing primiti
 
 ## Why BinaryBuffers?
 
-- Work directly with `byte[]` buffers
+- Use the recommended span-based reader and writer for direct `byte[]` access
+- Work directly with `byte[]`, `Span<byte>`, and `ReadOnlySpan<byte>` buffers
 - Reuse existing buffers with `ResetBuffer(...)`
 - Read from `ReadOnlyMemory<byte>` and `ReadOnlySequence<byte>`
 - Use shared abstractions through `IBufferReader` and `IBufferWriter`
@@ -21,6 +22,28 @@ dotnet add package Salar.BinaryBuffers
 ```
 
 ## Quick start
+
+When working directly with a `byte[]`, `Span<byte>`, or `ReadOnlySpan<byte>`, prefer `BinarySpanBufferWriter` and `BinarySpanBufferReader`. They provide the recommended zero-allocation, lowest-overhead path.
+
+### Recommended span-based API
+
+```csharp
+using Salar.BinaryBuffers;
+
+var buffer = new byte[32];
+var writer = new BinarySpanBufferWriter(buffer);
+
+writer.Write(2022);
+writer.Write(8.11);
+
+var reader = new BinarySpanBufferReader(writer.ToReadOnlySpan());
+var year = reader.ReadInt32();
+var value = reader.ReadDouble();
+```
+
+`BinarySpanBufferWriter` and `BinarySpanBufferReader` are `ref struct` types, so they cannot be stored as class fields or used across `async` boundaries. In those cases, use `BinaryBufferWriter` and `BinaryBufferReader`; they are still very fast and can also be referenced through their shared interfaces.
+
+### Class-based API
 
 ```csharp
 using Salar.BinaryBuffers;
@@ -38,9 +61,13 @@ var year = reader.ReadInt32();
 var value = reader.ReadDouble();
 ```
 
-## BinarySpanBufferWriter
+## Span-based reader and writer
 
-`BinarySpanBufferWriter` is a zero-allocation, high-performance writer that operates directly on a `Span<byte>`. As a `ref struct`, it can work with stack-allocated memory (`stackalloc`) for maximum performance with no heap allocations.
+`BinarySpanBufferWriter` and `BinarySpanBufferReader` are zero-allocation, high-performance types that operate directly on spans. As `ref struct` types, they can work with stack-allocated memory (`stackalloc`) without copying or allocating intermediate buffers.
+
+### `BinarySpanBufferWriter`
+
+Use `BinarySpanBufferWriter` to write directly to a `Span<byte>`:
 
 ```csharp
 // Stack-allocated buffer — no heap allocation
@@ -67,14 +94,27 @@ var writer = new BinarySpanBufferWriter(buffer);
 Serialize(writer, 42); // Works via generic constraint — no boxing
 ```
 
-Because it is a `ref struct`, `BinarySpanBufferWriter` cannot be stored as a class field, used in async methods, or boxed to an interface directly. Use `BinaryBufferWriter` when those capabilities are needed.
+### `BinarySpanBufferReader`
+
+Use `BinarySpanBufferReader` to read directly from a `ReadOnlySpan<byte>`:
+
+```csharp
+ReadOnlySpan<byte> buffer = GetBuffer();
+var reader = new BinarySpanBufferReader(buffer);
+
+var id = reader.ReadInt32();
+var amount = reader.ReadDouble();
+```
+
+Because they are `ref struct` types, span-based readers and writers cannot be stored as class fields, used across `async` boundaries, or boxed to interfaces directly. Use the still-high-performance `BinaryBufferWriter` and `BinaryBufferReader` when those capabilities are needed.
 
 ## Additional Goodies
-Use `StreamBufferWriter` as a drop in replacement for `BinaryWriter` to gain ~10% improvement in performance.
+
+Use `StreamBufferWriter` as a drop-in replacement for `BinaryWriter` when a `Stream` is required.
 
 ### `BinaryBufferWriter`
 
-Use `ResetBuffer` method in `BinaryBufferReader`, `BinaryBufferWriter`, and `BinarySpanBufferWriter` instead of creating a new one and have less allocations!
+Reuse `BinaryBufferReader`, `BinaryBufferWriter`, `BinarySpanBufferReader`, and `BinarySpanBufferWriter` with `ResetBuffer(...)` instead of creating new instances.
 
 ```csharp
 using Salar.BinaryBuffers;
@@ -119,7 +159,7 @@ This makes it easier to program against `IBufferReader` and `IBufferWriter` inst
 
 BinaryBuffers is a good fit when you:
 
-- already own the underlying byte buffer
+- already own the underlying byte buffer and can use the recommended span-based APIs
 - want to avoid wrapping buffers in `MemoryStream`
 - need predictable, low-allocation binary serialization of primitive values
 - want to reuse the same buffer across repeated operations
