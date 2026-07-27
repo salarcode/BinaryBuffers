@@ -113,8 +113,8 @@ public ref struct BinarySpanBufferReader
 	/// </summary>
 	public decimal ReadDecimal()
 	{
-		var position = Advance(16);
-		ref byte data = ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), position);
+		var span = AdvanceAsSpan(16);
+		ref byte data = ref MemoryMarshal.GetReference(span);
 		var lo = Unsafe.ReadUnaligned<int>(ref data);
 		var mid = Unsafe.ReadUnaligned<int>(ref Unsafe.Add(ref data, 4));
 		var hi = Unsafe.ReadUnaligned<int>(ref Unsafe.Add(ref data, 8));
@@ -141,8 +141,8 @@ public ref struct BinarySpanBufferReader
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public float ReadSingle()
 	{
-		var position = Advance(sizeof(float));
-		return Unsafe.ReadUnaligned<float>(ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), position));
+		var span = AdvanceAsSpan(sizeof(float));
+		return Unsafe.As<byte, float>(ref MemoryMarshal.GetReference(span));
 	}
 
 	/// <summary>
@@ -151,8 +151,8 @@ public ref struct BinarySpanBufferReader
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public double ReadDouble()
 	{
-		var position = Advance(sizeof(double));
-		return Unsafe.ReadUnaligned<double>(ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), position));
+		var span = AdvanceAsSpan(sizeof(double));
+		return Unsafe.As<byte, double>(ref MemoryMarshal.GetReference(span));
 	}
 
 	/// <summary>
@@ -161,8 +161,8 @@ public ref struct BinarySpanBufferReader
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public short ReadInt16()
 	{
-		var position = Advance(sizeof(short));
-		return Unsafe.ReadUnaligned<short>(ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), position));
+		var span = AdvanceAsSpan(sizeof(short));
+		return Unsafe.As<byte, short>(ref MemoryMarshal.GetReference(span));
 	}
 
 	/// <summary>
@@ -171,8 +171,8 @@ public ref struct BinarySpanBufferReader
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public int ReadInt32()
 	{
-		var position = Advance(sizeof(int));
-		return Unsafe.ReadUnaligned<int>(ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), position));
+		var span = AdvanceAsSpan(sizeof(int));
+		return Unsafe.As<byte, int>(ref MemoryMarshal.GetReference(span));
 	}
 
 	/// <summary>
@@ -181,8 +181,8 @@ public ref struct BinarySpanBufferReader
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public long ReadInt64()
 	{
-		var position = Advance(sizeof(long));
-		return Unsafe.ReadUnaligned<long>(ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), position));
+		var span = AdvanceAsSpan(sizeof(long));
+		return Unsafe.As<byte, long>(ref MemoryMarshal.GetReference(span));
 	}
 
 	/// <summary>
@@ -191,8 +191,8 @@ public ref struct BinarySpanBufferReader
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public ushort ReadUInt16()
 	{
-		var position = Advance(sizeof(ushort));
-		return Unsafe.ReadUnaligned<ushort>(ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), position));
+		var span = AdvanceAsSpan(sizeof(ushort));
+		return Unsafe.As<byte, ushort>(ref MemoryMarshal.GetReference(span));
 	}
 
 	/// <summary>
@@ -201,8 +201,8 @@ public ref struct BinarySpanBufferReader
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public uint ReadUInt32()
 	{
-		var position = Advance(sizeof(uint));
-		return Unsafe.ReadUnaligned<uint>(ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), position));
+		var span = AdvanceAsSpan(sizeof(uint));
+		return Unsafe.As<byte, uint>(ref MemoryMarshal.GetReference(span));
 	}
 
 	/// <summary>
@@ -211,8 +211,8 @@ public ref struct BinarySpanBufferReader
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public ulong ReadUInt64()
 	{
-		var position = Advance(sizeof(ulong));
-		return Unsafe.ReadUnaligned<ulong>(ref Unsafe.Add(ref MemoryMarshal.GetReference(_buffer), position));
+		var span = AdvanceAsSpan(sizeof(ulong));
+		return Unsafe.As<byte, ulong>(ref MemoryMarshal.GetReference(span));
 	}
 
 	/// <summary>
@@ -232,8 +232,7 @@ public ref struct BinarySpanBufferReader
 		if (count <= 0)
 			return ReadOnlySpan<byte>.Empty;
 
-		var position = Advance(count);
-		return _buffer.Slice(position, count);
+		return AdvanceAsSpan(count);
 	}
 
 	/// <summary>
@@ -272,7 +271,7 @@ public ref struct BinarySpanBufferReader
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private int Advance(int count)
+	private ReadOnlySpan<byte> AdvanceAsSpan(int count)
 	{
 		var position = _position;
 		var newPosition = position + count;
@@ -282,7 +281,7 @@ public ref struct BinarySpanBufferReader
 		}
 
 		_position = newPosition;
-		return position;
+		return _buffer.Slice(position, count);
 	}
 
 #if NET6_0_OR_GREATER
