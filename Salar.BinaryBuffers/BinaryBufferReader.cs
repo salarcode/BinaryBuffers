@@ -272,6 +272,9 @@ public sealed class BinaryBufferReader : BufferReaderBase
 		return new ReadOnlySpan<byte>(_data, _offset + relativePosition, count);
 	}
 
+	/// <summary>
+	/// Returns a read-only memory over the specified number of bytes from the underlying byte array and advances the current position by that number of bytes.
+	/// </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public override ReadOnlyMemory<byte> ReadMemory(int count)
 	{

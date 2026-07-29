@@ -21,7 +21,7 @@ namespace Salar.BinaryBuffers;
 /// Use <see cref="BinaryBufferReader"/> when the reader must be stored as a field or used by async code.
 /// </para>
 /// </remarks>
-public ref struct BinarySpanBufferReader
+public ref struct BinarySpanBufferReader : IBufferReader
 {
 #if NET7_0_OR_GREATER
 	// Ref-readonly byte allows reading bytes safely without mutating them,
@@ -249,9 +249,20 @@ public ref struct BinarySpanBufferReader
 	public ReadOnlySpan<byte> ReadSpan(int count)
 	{
 		if (count <= 0)
-			return ReadOnlySpan<byte>.Empty;
+			return [];
 
 		return AdvanceAsSpan(count);
+	}
+
+	/// <summary>
+	/// Reads the specified number of bytes as a memory block and advances the current position.
+	/// </summary>
+	public ReadOnlyMemory<byte> ReadMemory(int count)
+	{
+		if (count <= 0)
+			return ReadOnlyMemory<byte>.Empty;
+
+		return new ReadOnlyMemory<byte>(AdvanceAsSpan(count).ToArray());
 	}
 
 	/// <summary>
